@@ -8,7 +8,7 @@ export function HomeCarouselImage({text}){
       backgroundColor:"lightgreen", 
       width:"300", 
       height:"200"}}>
-       <Image src={viteLogo} />
+       <Image src={`https://picsum.photos/seed/${text}/200/300`} />
     </div>
   )
 }

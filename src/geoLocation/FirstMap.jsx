@@ -9,7 +9,6 @@ export function FirstMap(){
 
   const [coordinates, setCoordinates] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  //const [position, setPosition] = useState(null);
   
   // Click the map to show a marker at your detected location
   function LocationMarker(){
