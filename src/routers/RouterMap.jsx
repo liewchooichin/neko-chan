@@ -8,6 +8,7 @@ import { ProductItemDetails } from "../components/ProductItemDetails";
 import { HomePage } from "./HomePage";
 import { CartPage } from "../components/CartPage";
 import { FirstMap } from "../geoLocation/FirstMap";
+import { RoadCamera } from "../geoLocation/RoadCamera";
 
 
 export const router = createBrowserRouter([
@@ -23,8 +24,11 @@ export const router = createBrowserRouter([
       {
         path: "first-map",
         element: <FirstMap />
-      }
-      ,
+      },
+      {
+        path: "road-camera",
+        element: <RoadCamera />,
+      },
       {
         path: "products",
         element:  <ProductIndex />,

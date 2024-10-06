@@ -20,7 +20,8 @@ export function RootIndex() {
               <NavDropdown.Item as={Link} to="/first-map">
                 First Map
               </NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.1">Nothing yet
+              <NavDropdown.Item as={Link} to="/road-camera">
+                Road Camera
               </NavDropdown.Item>
               <NavDropdown.Item href="#action/3.3">Nothing yet
               </NavDropdown.Item>
