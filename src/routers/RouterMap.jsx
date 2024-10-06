@@ -7,6 +7,7 @@ import { ProductIndex } from "../components/ProductIndex";
 import { ProductItemDetails } from "../components/ProductItemDetails";
 import { HomePage } from "./HomePage";
 import { CartPage } from "../components/CartPage";
+import { FirstMap } from "../geoLocation/FirstMap";
 
 
 export const router = createBrowserRouter([
@@ -19,6 +20,11 @@ export const router = createBrowserRouter([
         path: "home",
         element: <HomePage />,
       },
+      {
+        path: "first-map",
+        element: <FirstMap />
+      }
+      ,
       {
         path: "products",
         element:  <ProductIndex />,
