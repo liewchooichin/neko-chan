@@ -1,6 +1,6 @@
 import myStyles from "./myStyles.module.css";
 import { useState, useEffect } from "react";
-import { MapContainer , TileLayer, useMap, Marker, Popup } 
+import { MapContainer , TileLayer, useMapEvents, Marker, Popup } 
   from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -9,7 +9,36 @@ export function FirstMap(){
 
   const [coordinates, setCoordinates] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  // sample
+  //const [position, setPosition] = useState(null);
+  
+  // Click the map to show a marker at your detected location
+  function LocationMarker(){
+    const [position, setPosition] = useState(null);
+    const map = useMapEvents({
+      click(){
+        map.locate()
+      },
+      locationfound(e){
+        setPosition(e.latlng);
+        map.flyTo(e.latlng, map.getZoom())
+      },
+    })
+    if(!position){
+      return null
+    } else {
+      return (
+        <Marker position={position}>
+          <Popup>(Latitude {position.lat}, Longitude {position.lng}) 
+            <br/>From the location detected, you are here.</Popup>
+        </Marker>
+      )
+    }
+  }
+
+
+  function handleMarkerClick(e){
+    console.log('marker clicked');
+  }
   
   async function getMapCoordinate(){
     try{
@@ -58,11 +87,16 @@ export function FirstMap(){
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker position={coordinates}>
+        <Marker position={coordinates}
+          eventHandlers={{click: handleMarkerClick}}
+        >
         <Popup>
           Tanjong Pagar Plaze<br />Food & Market Centre
         </Popup>
         </Marker>
+
+        <LocationMarker></LocationMarker>
+        
         </MapContainer>
         </div>
       ))
