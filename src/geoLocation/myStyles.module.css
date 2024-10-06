@@ -2,4 +2,9 @@
 .myMap {
   width: 800px;
   height: 400px;
-}
+};
+.simpleGeoJson {
+  color: #00ff9d;
+  weight: 5;
+  opacity: 0.65;
+};

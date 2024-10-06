@@ -63,18 +63,20 @@ export function ProductItemDetails(/* {item, cartList, setCartList} */) {
         console.log("url ", url);
         const response = await mockApi.get(url);
         setItem(response.data);
+        setQuantity(response.data.productQty);
+        console.log(response.data);
       } catch(error){
         console.error(error.message);
       } finally {
         setIsLoading(false);
-      }
-    }  
+      } 
+    } 
     // setup connection
     let ignore = false;
-    //if(!ignore){
+    if(!ignore){
       console.log("Effect get item.")
       getProductItem();
-    //}
+    }
     // clean up connection
     return(()=>{console.log("Clean up"); ignore=true})
   }, [productId]);

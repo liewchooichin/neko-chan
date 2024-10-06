@@ -9,10 +9,10 @@ export function FirstMap(){
 
   const [coordinates, setCoordinates] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  
+  const [position, setPosition] = useState(null);
+
   // Click the map to show a marker at your detected location
-  function LocationMarker(){
-    const [position, setPosition] = useState(null);
+  function LocationMarker(){  
     const map = useMapEvents({
       click(){
         map.locate()
@@ -76,8 +76,14 @@ export function FirstMap(){
     {
       ((coordinates!=null && !isLoading) && (
         <div>
-        <p>Lat {coordinates.lat}, Lng {coordinates.lng}</p>
-
+        <p>Tanjong Pagar Plaze at 
+          (Lat: {coordinates.lat}, Lng: {coordinates.lng})
+        </p>
+        <p>Click the map to show a marker at your detected location.</p>
+        {
+          (position) && 
+          (<p>Your location is at (latitude: {position.lat}, longitude: {position.lng})</p>)
+        }
         <MapContainer 
           center={coordinates} zoom={13} 
           scrollWheelZoom={true} 
