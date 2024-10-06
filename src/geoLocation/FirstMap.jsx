@@ -1,8 +1,12 @@
+// Useful resource: 
+// https://stackoverflow.com/questions/44155385/rendering-geojson-with-react-leaflet
+
 import myStyles from "./myStyles.module.css";
 import { useState, useEffect } from "react";
 import { MapContainer , TileLayer, useMapEvents, Marker, Popup } 
   from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+
 
 
 export function FirstMap(){

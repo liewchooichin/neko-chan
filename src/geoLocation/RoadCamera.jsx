@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, GeoJSON } from "react-leaflet";
 import L, { divIcon } from "leaflet";
 //import seg from "./seg.json";
 //import ecomp from "./ecomp.json";
@@ -24,6 +24,9 @@ export function RoadCamera() {
         const data = await response.json();
         setGeoData(data);
         console.log("Response from road camera ", response.status);
+        console.log(data["features"][0]["type"]);
+        console.log(data["features"][0]["properties"]["Name"]);
+        console.log(data["features"][0]["properties"]["Description"]);
       } 
       catch(error){
         console.error(error);
@@ -67,7 +70,9 @@ export function RoadCamera() {
           keyboard={false}
         >
           <TileLayer url='http://{s}.tile.osm.org/{z}/{x}/{y}.png' attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' />
-          
+          <Marker position={initialCenter}>
+          <Popup>To be implemented.</Popup>
+        </Marker>
           <GeoJSON data={geoData} key="my-geojson" />
         </MapContainer>
       </div>
