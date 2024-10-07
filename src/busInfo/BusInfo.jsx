@@ -10,6 +10,8 @@ export function BusInfo(){
   async function getData(){
     try{
       setIsLoading(true);
+      console.log("Vite", import.meta.env.VITE_MY_KEY);
+      console.log("from axios ", apiInstance.defaults.headers);
       const params = {
         "BusStopCode": 83139,
         "ServiceNo": 15,
