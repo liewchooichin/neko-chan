@@ -91,7 +91,10 @@ export function FirstMap(){
         <MapContainer 
           center={coordinates} zoom={13} 
           scrollWheelZoom={true} 
-          className={myStyles.myMap}>
+          className={myStyles.myMap}
+          style={{width:"100vh", height:"100vh"}}
+          invalidateSize={()=>{this.invalidateSize(true)}}
+          >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -100,7 +103,7 @@ export function FirstMap(){
           eventHandlers={{click: handleMarkerClick}}
         >
         <Popup>
-          Tanjong Pagar Plaze<br />Food & Market Centre
+          Tanjong Pagar Plaza<br />Food & Market Centre
         </Popup>
         </Marker>
 
