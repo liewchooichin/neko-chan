@@ -1,10 +1,8 @@
 import { MapContainer, TileLayer, Marker, Popup, GeoJSON } from "react-leaflet";
-import L, { divIcon } from "leaflet";
-//import seg from "./seg.json";
-//import ecomp from "./ecomp.json";
-import myStyles from "./myStyles.module.css";
-//import "./styles.css";
 import { useState, useEffect } from "react";
+import L from 'leaflet';
+import { circleMarker } from 'leaflet';
+
 
 // Manually set the center to Tanjong Pagar Plaze
 const initialCenter = [1.2770944301223577, 103.84318057126386];
@@ -44,6 +42,24 @@ export function RoadCamera() {
     return(()=>{ignore=true})
   }, [])
 
+  // handle marker in the map
+  function handleEachFeature(feature, layer){
+    if(feature.properties && feature.properties.Name){
+      // format the popup content
+      layer.bindPopup(feature.properties.Description);
+    }
+  }
+  const geojsonMarkerOptions = {
+    radius: 8,
+    fillColor: "#ff7800",
+    color: "#000",
+    weight: 1,
+    opacity: 1,
+    fillOpacity: 0.8
+  };
+  function handlePointToLayer(feature, latlng){
+    return L.circleMarker(latlng, geojsonMarkerOptions);
+  }
 
   return (
     <>
@@ -71,9 +87,12 @@ export function RoadCamera() {
         >
           <TileLayer url='http://{s}.tile.osm.org/{z}/{x}/{y}.png' attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' />
           <Marker position={initialCenter}>
-          <Popup>To be implemented.</Popup>
+          <Popup>Center of map: Tanjong Pagar Plaze</Popup>
         </Marker>
-          <GeoJSON data={geoData} key="my-geojson" />
+          <GeoJSON key={geoData.features} data={geoData}
+            onEachFeature={handleEachFeature}
+            pointToLayer={handlePointToLayer}
+          ></GeoJSON>
         </MapContainer>
       </div>
     )}</>
