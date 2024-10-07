@@ -1,8 +1,11 @@
-# React + Vite
+# README
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Testing area for my mini-projects.
 
-Currently, two official plugins are available:
+## Neko-Chan
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+I want to try a simple page where users can add to favorites or wishlist.
+
+## Maps
+
+Learn to use map and populate the map with GeoJSON data.
