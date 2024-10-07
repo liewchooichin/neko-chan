@@ -2,7 +2,7 @@ import { MapContainer, TileLayer, Marker, Popup, GeoJSON } from "react-leaflet";
 import { useState, useEffect } from "react";
 import L from 'leaflet';
 import { circleMarker } from 'leaflet';
-
+import "leaflet/dist/leaflet.css";
 
 // Manually set the center to Tanjong Pagar Plaze
 const initialCenter = [1.2770944301223577, 103.84318057126386];
@@ -21,17 +21,17 @@ export function RoadCamera() {
         const response = await fetch(filename);
         const data = await response.json();
         setGeoData(data);
-        console.log("Response from road camera ", response.status);
-        console.log(data["features"][0]["type"]);
-        console.log(data["features"][0]["properties"]["Name"]);
-        console.log(data["features"][0]["properties"]["Description"]);
+        //console.log("Response from road camera ", response.status);
+        //console.log(data["features"][0]["type"]);
+        //console.log(data["features"][0]["properties"]["Name"]);
+        //console.log(data["features"][0]["properties"]["Description"]);
       } 
       catch(error){
         console.error(error);
       }
       finally{
         setIsLoading(false);
-        console.log("finally in road camera");
+        //console.log("finally in road camera");
       }
     }
     let ignore = false;
