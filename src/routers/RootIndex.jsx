@@ -17,6 +17,9 @@ export function RootIndex() {
             <Nav.Link as={Link} to="/home">Home</Nav.Link>
             <Nav.Link as={Link} to="/products">Products</Nav.Link>
             <NavDropdown title="Dropdown" id="basic-nav-dropdown">
+              <NavDropdown.Item as={Link} to="/bus-info">
+                Bus Info
+              </NavDropdown.Item>
               <NavDropdown.Item as={Link} to="/first-map">
                 First Map
               </NavDropdown.Item>
