@@ -7,7 +7,7 @@ import { Link, Outlet } from "react-router-dom";
 
 export function RootIndex() {
   return (
-    <>
+    <Container>
     <Navbar expand="lg" className="bg-body-tertiary">
       <Container>
         <Navbar.Brand href="/home">Neko-Chan</Navbar.Brand>
@@ -35,10 +35,8 @@ export function RootIndex() {
       </Container>
     </Navbar>
     
-    <Container>
       <Outlet />
     </Container>
-    </>
   );
 }
 
