@@ -9,7 +9,8 @@ import { HomePage } from "./HomePage";
 import { CartPage } from "../components/CartPage";
 import { FirstMap } from "../geoLocation/FirstMap";
 import { RoadCamera } from "../geoLocation/RoadCamera";
-import { BusInfo } from "../busInfo/busInfo";
+import { BusInfo } from "../busInfo/BusInfo";
+import { BusServices } from "../busInfo/BusServices";
 
 
 export const router = createBrowserRouter([
@@ -33,6 +34,10 @@ export const router = createBrowserRouter([
       {
         path: "bus-info",
         element: <BusInfo />
+      },
+      {
+        path: "bus-services",
+        element: <BusServices />,
       },
       {
         path: "products",
