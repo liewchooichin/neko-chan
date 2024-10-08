@@ -32,6 +32,9 @@ export function RootIndex() {
               <NavDropdown.Item as={Link} to="/road-camera">
                 Road Camera
               </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/road-name">
+                Road Name
+              </NavDropdown.Item>
               <NavDropdown.Item as={Link} to="/dogs">
               </NavDropdown.Item>
               <NavDropdown.Divider />

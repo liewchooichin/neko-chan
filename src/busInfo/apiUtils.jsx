@@ -1,9 +1,9 @@
 import axios from "axios";
 
-export const BASE_URL = "https://datamall2.mytransport.sg";
-export const BUS_ARRIVAL = "/ltaodataservice/v3/BusArrival";
-export const BUS_SERVICES = "/ltaodataservice/BusServices";
-export const BUS_ROUTES = "ltaodataservice/BusRoutes";
+export const BASE_URL = "https://datamall2.mytransport.sg/ltaodataservice";
+export const BUS_ARRIVAL = "/v3/BusArrival";
+export const BUS_SERVICES = "/BusServices";
+export const BUS_ROUTES = "/BusRoutes";
 
 const headers = {
   'accountKey': `${import.meta.env.VITE_MY_KEY}`,

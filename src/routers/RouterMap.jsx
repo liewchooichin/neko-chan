@@ -13,6 +13,7 @@ import { BusInfo } from "../busInfo/BusInfo";
 import { BusServices } from "../busInfo/BusServices";
 import { DogApp } from "../dogs/DogApp";
 import { BusRoutes } from "../busInfo/BusRoutes";
+import { RoadName } from "../geoLocation/RevGeocoding";
 
 
 export const router = createBrowserRouter([
@@ -32,6 +33,10 @@ export const router = createBrowserRouter([
       {
         path: "road-camera",
         element: <RoadCamera />,
+      },
+      {
+        path: "road-name",
+        element: <RoadName/>
       },
       {
         path: "bus-info",

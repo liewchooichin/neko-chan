@@ -1,0 +1,74 @@
+{
+  "items": [
+      {
+          "title": "Tanjong Pagar Plaza, 7 Tg Pagar Plz, Singapore 081007, Singapore",
+          "id": "here:af:streetsection:NJCk0Hwpp7m.lLPnDbipLB:CgcIBCD24YpyEAEaATc",
+          "resultType": "houseNumber",
+          "houseNumberType": "PA",
+          "address": {
+              "label": "Tanjong Pagar Plaza, 7 Tg Pagar Plz, Singapore 081007, Singapore",
+              "countryCode": "SGP",
+              "countryName": "Singapore",
+              "countyCode": "SG",
+              "county": "Singapore",
+              "city": "Singapore",
+              "district": "Central Business District",
+              "street": "Tg Pagar Plz",
+              "postalCode": "081007",
+              "houseNumber": "7",
+              "building": "Tanjong Pagar Plaza"
+          },
+          "position": {
+              "lat": 1.27695,
+              "lng": 103.84315
+          },
+          "access": [
+              {
+                  "lat": 1.27689,
+                  "lng": 103.84303
+              }
+          ],
+          "distance": 16,
+          "mapView": {
+              "west": 103.84242,
+              "south": 1.27476,
+              "east": 103.84342,
+              "north": 1.27716
+          }
+      },
+      {
+        "title": "Singapore F1 Padang Grandstand",
+        "id": "here:pds:place:702w21z7-9e1b85d6ccfe93d9031a5495e8e3196b",
+        "resultType": "place",
+        "address": {
+          "label": "Singapore F1 Padang Grandstand, St Andrew's Rd, Singapore 17, Singapore",
+          "countryCode": "SGP",
+          "countryName": "Singapore",
+          "countyCode": "SG",
+          "county": "Singapore",
+          "city": "Singapore",
+          "district": "Central Business District",
+          "street": "St Andrew's Rd",
+          "postalCode": "17"
+        },
+        "position": {
+          "lat": 1.29073,
+          "lng": 103.85245
+        },
+        "access": [
+          {
+            "lat": 1.2908,
+            "lng": 103.85234
+          }
+        ],
+        "distance": 61,
+        "categories": [
+          {
+            "id": "800-8400-0000",
+            "name": "Event Space",
+            "primary": true
+          }
+        ]
+      }
+  ]
+}

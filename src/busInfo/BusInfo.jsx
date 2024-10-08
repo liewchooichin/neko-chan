@@ -37,7 +37,8 @@ export function BusInfo(){
       //   BusStopCode: "83139",
       //   ServiceNo: "15",
       // }
-      const response = apiInstance.get(BUS_ARRIVAL,  
+      const url = `${BASE_URL}/${BUS_ARRIVAL}`
+      const response = await apiInstance.get(url,  
         {params:{BusStopCode: "83139", ServiceNo: "15"}});
       setBusArrival(response.data);
     }catch(error){
