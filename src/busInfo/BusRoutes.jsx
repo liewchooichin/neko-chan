@@ -6,21 +6,25 @@ export function BusRoutes(){
   const [busRoutes, setBusRoutes] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // load data
-  async function getData(){
-    try{
-      setIsLoading(true);
-      const response = await apiInstance.get(BUS_ROUTES); 
-      setBusRoutes(response.data);
-    }catch(error){
-      console.error(error);
-    }finally{
-      setIsLoading(false);
-    }
-  } 
 
   useEffect(()=>{
     let ignore = false;
+    // load data
+    async function getData(){
+      try{
+        setIsLoading(true);
+        const response = await apiInstance.get(BUS_ROUTES,
+          {params: {"$skip":"500"}}
+        ); 
+        if(!ignore){
+          setBusRoutes(response.data);
+        }
+      }catch(error){
+        console.error(error);
+      }finally{
+        setIsLoading(false);
+      }
+    } 
     if(!ignore){
       getData();
     }

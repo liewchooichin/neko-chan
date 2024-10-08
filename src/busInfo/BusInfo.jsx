@@ -22,7 +22,7 @@ export function BusInfo(){
 
 
   fetch("https://datamall2.mytransport.sg/ltaodataservice/v3/BusArrival?BusStopCode=83139", requestOptions)
-    .then((response) => response.text())
+    .then((response) => response.json())
     .then((result) => {setBusArrival(result); console.log(result)})
     .catch((error) => console.error(error));
 }
@@ -38,7 +38,7 @@ export function BusInfo(){
       //   ServiceNo: "15",
       // }
       const url = `${BASE_URL}/${BUS_ARRIVAL}`
-      const response = await apiInstance.get(url,  
+      const response = await apiInstance.get(BUS_ARRIVAL,  
         {params:{BusStopCode: "83139", ServiceNo: "15"}});
       setBusArrival(response.data);
     }catch(error){

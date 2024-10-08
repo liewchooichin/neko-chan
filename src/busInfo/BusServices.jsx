@@ -10,7 +10,9 @@ export function BusServices(){
   async function getData(){
     try{
       setIsLoading(true);
-      const response = await apiInstance.get(BUS_SERVICES);
+      const response = await apiInstance.get(BUS_SERVICES,
+        {params: {"$skip": "500"}}
+      );
       setBusServices(response.data);
     }catch(error){
       console.error(error);
