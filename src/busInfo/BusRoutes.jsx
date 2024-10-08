@@ -1,23 +1,23 @@
 import { useEffect, useState } from "react";
-import { apiInstance, BASE_URL, BUS_SERVICES } from "./apiUtils";
+import { apiInstance, BASE_URL, BUS_ROUTES} from "./apiUtils";
 
-export function BusServices(){
+export function BusRoutes(){
   
-  const [busServices, setBusServices] = useState(null);
+  const [busRoutes, setBusRoutes] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   // load data
   async function getData(){
     try{
       setIsLoading(true);
-      const response = await apiInstance.get(BUS_SERVICES);
-      setBusServices(response.data);
+      const response = await apiInstance.get(BUS_ROUTES); 
+      setBusRoutes(response.data);
     }catch(error){
       console.error(error);
     }finally{
       setIsLoading(false);
     }
-  }
+  } 
 
   useEffect(()=>{
     let ignore = false;
@@ -29,12 +29,12 @@ export function BusServices(){
   }, [])
 
   let content;
-  if((busServices && !isLoading))
+  if((busRoutes && !isLoading))
   {
     content = (
       <>
-      <p>Service No. {busServices["value"][0]["ServiceNo"]}</p>
-      <p>Operator {busServices["value"][0]["Operator"]}</p>
+      <p>Service No. {busRoutes["value"][0]["ServiceNo"]}</p>
+      <p>Operator {busRoutes["value"][0]["Operator"]}</p>
       </>
     )
   } else {
@@ -43,7 +43,7 @@ export function BusServices(){
 
   return(
     <>
-    <h2>Bus services</h2>
+    <h2>Bus Routes</h2>
 
     {content}
     </>

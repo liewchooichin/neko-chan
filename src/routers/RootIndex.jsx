@@ -23,13 +23,16 @@ export function RootIndex() {
               <NavDropdown.Item as={Link} to="/bus-services">
                 Bus Services
               </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/bus-routes">
+                Bus Routes
+              </NavDropdown.Item>
               <NavDropdown.Item as={Link} to="/first-map">
                 First Map
               </NavDropdown.Item>
               <NavDropdown.Item as={Link} to="/road-camera">
                 Road Camera
               </NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.3">Nothing yet
+              <NavDropdown.Item as={Link} to="/dogs">
               </NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item href="#action/3.4">

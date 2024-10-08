@@ -11,6 +11,8 @@ import { FirstMap } from "../geoLocation/FirstMap";
 import { RoadCamera } from "../geoLocation/RoadCamera";
 import { BusInfo } from "../busInfo/BusInfo";
 import { BusServices } from "../busInfo/BusServices";
+import { DogApp } from "../dogs/DogApp";
+import { BusRoutes } from "../busInfo/BusRoutes";
 
 
 export const router = createBrowserRouter([
@@ -38,6 +40,14 @@ export const router = createBrowserRouter([
       {
         path: "bus-services",
         element: <BusServices />,
+      },
+      {
+        path: "bus-routes",
+        element: <BusRoutes />,
+      },
+      {
+        path: "dogs",
+        element: <DogApp />,
       },
       {
         path: "products",
