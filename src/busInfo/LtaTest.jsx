@@ -6,7 +6,7 @@ const headers = {
 };
 
 function LtaTest() {
-  const fetchBusArrival = async () => {
+  async function fetchBusArrival(){
     const response = await axios.get("/api-proxy/ltaodataservice/v3/BusArrival?BusStopCode=83139", { headers });
 
     console.log(response);

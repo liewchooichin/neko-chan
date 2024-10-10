@@ -1,0 +1,46 @@
+{
+  "odata.metadata": "https://datamall2.mytransport.sg/ltaodataservice/v3/BusArrival",
+  "BusStopCode": "05631",
+  "Services": [
+    {
+      "ServiceNo": "196",
+      "Operator": "SBST",
+      "NextBus": {
+        "OriginCode": "84009",
+        "DestinationCode": "17009",
+        "EstimatedArrival": "2024-10-10T11:45:47+08:00",
+        "Monitored": 1,
+        "Latitude": "1.2808628333333334",
+        "Longitude": "103.85110416666667",
+        "VisitNumber": "1",
+        "Load": "SDA",
+        "Feature": "WAB",
+        "Type": "SD"
+      },
+      "NextBus2": {
+        "OriginCode": "84009",
+        "DestinationCode": "17009",
+        "EstimatedArrival": "2024-10-10T12:09:27+08:00",
+        "Monitored": 1,
+        "Latitude": "1.3000926666666666",
+        "Longitude": "103.901731",
+        "VisitNumber": "1",
+        "Load": "SEA",
+        "Feature": "WAB",
+        "Type": "SD"
+      },
+      "NextBus3": {
+        "OriginCode": "84009",
+        "DestinationCode": "17009",
+        "EstimatedArrival": "2024-10-10T12:23:22+08:00",
+        "Monitored": 1,
+        "Latitude": "1.3095636666666666",
+        "Longitude": "103.92918633333333",
+        "VisitNumber": "1",
+        "Load": "SEA",
+        "Feature": "WAB",
+        "Type": "DD"
+      }
+    }
+  ]
+}
