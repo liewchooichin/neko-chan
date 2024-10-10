@@ -79,8 +79,8 @@ export function FirstMap(){
     }
     {
       ((coordinates!=null && !isLoading) && (
-        <div>
-        <p>Tanjong Pagar Plaze at 
+        <>
+        <p>Tanjong Pagar Plaza at 
           (Lat: {coordinates.lat}, Lng: {coordinates.lng})
         </p>
         <p>Click the map to show a marker at your detected location.</p>
@@ -92,8 +92,7 @@ export function FirstMap(){
           center={coordinates} zoom={13} 
           scrollWheelZoom={true} 
           className={myStyles.myMap}
-          style={{width:"100vh", height:"100vh"}}
-          invalidateSize={()=>{this.invalidateSize(true)}}
+          style={{width:"600px", height:"600px"}}
           >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -110,7 +109,7 @@ export function FirstMap(){
         <LocationMarker></LocationMarker>
         
         </MapContainer>
-        </div>
+        </>
       ))
     }
     </>

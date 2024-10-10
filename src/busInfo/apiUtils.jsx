@@ -6,9 +6,8 @@ export const BUS_SERVICES = "/BusServices";
 export const BUS_ROUTES = "/BusRoutes";
 
 const headers = {
-  'accountKey': `${import.meta.env.VITE_MY_KEY}`,
-  'Access-Control-Allow-Origin': '*',
-  'Vary': 'Origin',
+  AccountKey: import.meta.env.VITE_MY_KEY,
+  Accept: 'application/json',
 };
 console.log("Headers ", headers['accountKey']);
 

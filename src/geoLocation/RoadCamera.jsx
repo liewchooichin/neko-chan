@@ -66,7 +66,8 @@ export function RoadCamera() {
     {(isLoading && (!geoData)) && (<p>Loading</p>)}
 
     {(!isLoading && (geoData)) && (
-      <div style={{ position: "relative", width: "100%", height: "100vh" }}>
+      <div style={{"align-items": "center",
+        "height":"100vh", "display":"flex", "flex-direction": "column"}}>
         <MapContainer
           center={initialCenter}
           maxBoundsViscosity={1.0}
@@ -74,12 +75,11 @@ export function RoadCamera() {
           zoomControl={true}
           scrollWheelZoom={true}
           dragging={true}
-          touchZoom={false}
+          touchZoom={true}
           doubleClickZoom={false}
           boxZoom={false}
           keyboard={false}
-          style={{width:"100vh", height:"100vh"}}
-          invalidateSize={()=>{this.invalidateSize(true)}}
+          style={{width:"600px", height:"600px"}}
         >
           <TileLayer url='http://{s}.tile.osm.org/{z}/{x}/{y}.png' attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' />
           <Marker position={initialCenter}>

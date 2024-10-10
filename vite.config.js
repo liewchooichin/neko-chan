@@ -9,11 +9,21 @@ import react from '@vitejs/plugin-react'
 //       changeOrigin: true,
 //       rewrite: (path) => path.replace(/^\/datamall/, ''),
 //     },
-//     cors: false,
 //   }
 // }
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  server: {
+    proxy: {
+      '/api-proxy': {
+        // the actual API base domain that we want to call
+        target: "https://datamall2.mytransport.sg",
+        // hcnage the origin of the request to avoid CORS
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/api-proxy/, ""),
+      }
+    }
+  }
 })

@@ -14,6 +14,7 @@ import { BusServices } from "../busInfo/BusServices";
 import { DogApp } from "../dogs/DogApp";
 import { BusRoutes } from "../busInfo/BusRoutes";
 import { RoadName } from "../geoLocation/RevGeocoding";
+import LtaTest from "../busInfo/LtaTest";
 
 
 export const router = createBrowserRouter([
@@ -29,6 +30,10 @@ export const router = createBrowserRouter([
       {
         path: "first-map",
         element: <FirstMap />
+      },
+      {
+        path: "lta-test",
+        element: <LtaTest/>
       },
       {
         path: "road-camera",
