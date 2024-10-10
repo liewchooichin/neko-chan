@@ -8,6 +8,8 @@ I want to try a simple page where users can add to favorites or wishlist.
 
 ## Datamall
 
+### Step 1: 
+
 Keep getting errors when trying to use Datamall API. To rectify the erros, modify the Vite to use proxy:
 
 ```
@@ -27,6 +29,22 @@ export default defineConfig({
 })
 ```
 
+### Step 2: 
+
+Create two .env files:
+
+```
+# .env.deployment
+VITE_API_URL=/api-proxy
+
+# .env.production
+# "https://cors-anywhere.herokuapp.com/https://datamall2.mytransport.sg/ltaodataservice/v3/BusArrival";
+VITE_API_URL=https://cors-anywhere.herokuapp.com/https://datamall2.mytransport.sg
+
+```
+
+### Step 3: 
+
 In the component, call the **api-proxy** like this:
 
 ```
@@ -36,12 +54,15 @@ const headers = {
 };
 
 function LtaTest() {
-  async function fetchBusArrival(){
-    const response = await axios.get("/api-proxy/ltaodataservice/v3/BusArrival?BusStopCode=83139", 
-    { headers });
+  const fetchBusArrival = async () => {
+    const response = await axios.get(
+      `${import.meta.env.VITE_API_URL}/ltaodataservice/v3/BusArrival?BusStopCode=83139`,
+      { headers }
+    );
 
     console.log(response);
   };
+
 
   return (
     <div>

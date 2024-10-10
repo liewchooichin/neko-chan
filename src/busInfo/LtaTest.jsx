@@ -1,4 +1,4 @@
-import axios from "axios";
+import { apiInstance, BUS_ARRIVAL } from "./apiUtils";
 
 const headers = {
   AccountKey: import.meta.env.VITE_LTA_API_KEY, // Set your own API key
@@ -7,7 +7,7 @@ const headers = {
 
 function LtaTest() {
   async function fetchBusArrival(){
-    const response = await axios.get("/api-proxy/ltaodataservice/v3/BusArrival?BusStopCode=83139", { headers });
+    const response = await apiInstance.get(BUS, { headers });
 
     console.log(response);
   };

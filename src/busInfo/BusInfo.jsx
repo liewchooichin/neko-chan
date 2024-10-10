@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { apiInstance, BASE_URL, BUS_ARRIVAL } from "./apiUtils";
-import axios from "axios";
+import { apiInstance, BUS_ARRIVAL } from "./apiUtils";
 
 
 export function BusInfo(){
@@ -8,36 +7,14 @@ export function BusInfo(){
   const [busArrival, setBusArrival] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // using fetch
-  // this also gives error.
-  async function getData1(){
-  const myHeaders = new Headers();
-  myHeaders.append("accountKey", `${import.meta.env.VITE_MY_KEY}`);
-
-  const requestOptions = {
-    method: "GET",
-    headers: myHeaders,
-    redirect: "follow"
-  };
-
-
-  fetch("https://datamall2.mytransport.sg/ltaodataservice/v3/BusArrival?BusStopCode=83139", requestOptions)
-    .then((response) => response.json())
-    .then((result) => {setBusArrival(result); console.log(result)})
-    .catch((error) => console.error(error));
-}
-
   // load data
   async function getData(){
     try{
       setIsLoading(true);
-      console.log("Vite", import.meta.env.VITE_MY_KEY);
-      console.log("from axios ", apiInstance.defaults.headers);
       // const params = {
       //   BusStopCode: "83139",
       //   ServiceNo: "15",
       // }
-      const url = `${BASE_URL}/${BUS_ARRIVAL}`
       const response = await apiInstance.get(BUS_ARRIVAL,  
         {params:{BusStopCode: "83139", ServiceNo: "15"}});
       setBusArrival(response.data);
@@ -63,12 +40,9 @@ export function BusInfo(){
     content = (
       <>
       <h2>Bus arrival info</h2>
-      <h2>Use weather info instead</h2>
-      <p>{busArrival}</p>
-      {/* <p>Status : {busArrival["api_info"]["status"]}</p>
-      <p>Status : {busArrival["items"][0]["update_timestamp"]}</p> */}
-      {/* <p>Service No. {busArrival[0]["Services"]["ServiceNo"]}</p>
-      <p>Operator {busArrival[0]["Services"]["ServiceNo"]}</p> */}
+      <p>Bus stop code : {busArrival["BusStopCode"]}</p>
+      <p>Service No. {busArrival["Services"][0]["ServiceNo"]}</p>
+      <p>Operator {busArrival["Services"][0]["Operator"]}</p>
       </>
     )
   } else {
