@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect} from 'react';
 
 
 // https://geocode.search.hereapi.com/v1/geocode?q=Invalidenstr+117+Berlin&apiKey=YOUR_API_KEY

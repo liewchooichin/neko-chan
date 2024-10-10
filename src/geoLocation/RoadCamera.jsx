@@ -1,7 +1,6 @@
 import { MapContainer, TileLayer, Marker, Popup, GeoJSON } from "react-leaflet";
 import { useState, useEffect } from "react";
 import L from 'leaflet';
-import { circleMarker } from 'leaflet';
 import "leaflet/dist/leaflet.css";
 
 // Manually set the center to Tanjong Pagar Plaze

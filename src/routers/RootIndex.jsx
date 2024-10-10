@@ -16,12 +16,26 @@ export function RootIndex() {
           <Nav className="me-auto">
             <Nav.Link as={Link} to="/home">Home</Nav.Link>
             <Nav.Link as={Link} to="/products">Products</Nav.Link>
-            <NavDropdown title="Dropdown" id="basic-nav-dropdown">
+            <NavDropdown title="Sample Data" id="sample-bus-data">
+              <NavDropdown.Item as={Link} to="/sample-bus-arrival">
+                Sample Bus Arrival
+              </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/sample-bus-services">
+                Sample Bus Services
+              </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/sample-bus-stops">
+                Sample Bus Stops
+              </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/sample-bus-routes">
+                Sample Bus Routes
+              </NavDropdown.Item>
+            </NavDropdown>
+            <NavDropdown title="Bus Info" id="basic-nav-dropdown">
             <NavDropdown.Item as={Link} to="/lta-test">
                 Datamall Test
               </NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/bus-info">
-                Bus Info
+              <NavDropdown.Item as={Link} to="/bus-main">
+                Bus Arrival
               </NavDropdown.Item>
               <NavDropdown.Item as={Link} to="/bus-services">
                 Bus Services

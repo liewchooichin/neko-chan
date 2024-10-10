@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { apiInstance, BASE_URL, BUS_SERVICES } from "./apiUtils";
+import { busApi, BUS_SERVICES } from "./apiUtils";
 
 export function BusServices(){
   
@@ -10,7 +10,7 @@ export function BusServices(){
   async function getData(){
     try{
       setIsLoading(true);
-      const response = await apiInstance.get(BUS_SERVICES,
+      const response = await busApi.get(BUS_SERVICES,
         {params: {"$skip": "500"}}
       );
       setBusServices(response.data);

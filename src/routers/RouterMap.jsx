@@ -15,6 +15,11 @@ import { DogApp } from "../dogs/DogApp";
 import { BusRoutes } from "../busInfo/BusRoutes";
 import { RoadName } from "../geoLocation/RevGeocoding";
 import LtaTest from "../busInfo/LtaTest";
+import { BusMain } from "../busInfo/BusMain";
+import { SampleBusArrival } from "../sampleBusData/SampleBusArrival";
+import { SampleBusServices } from "../sampleBusData/SampleBusServices";
+import { SampleBusRoutes } from "../sampleBusData/SampleBusRoutes";
+import { SampleBusStops } from "../sampleBusData/SampleBusStops";
 
 
 export const router = createBrowserRouter([
@@ -44,8 +49,8 @@ export const router = createBrowserRouter([
         element: <RoadName/>
       },
       {
-        path: "bus-info",
-        element: <BusInfo />
+        path: "bus-main",
+        element: <BusMain />
       },
       {
         path: "bus-services",
@@ -65,11 +70,27 @@ export const router = createBrowserRouter([
       },
       {
         path: "products/:productId",
-        element: <ProductItemDetails />
+        element: <ProductItemDetails />,
       },
       {
         path: "cart",
         element: <CartPage />
+      },
+      {
+        path: "sample-bus-arrival",
+        element: <SampleBusArrival />,
+      },
+      {
+        path: "sample-bus-services",
+        element: <SampleBusServices />,
+      },
+      {
+        path: "sample-bus-stops",
+        element: <SampleBusStops />,
+      },
+      {
+        path: "sample-bus-routes",
+        element: <SampleBusRoutes />,
       },
     ],
   },

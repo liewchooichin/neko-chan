@@ -1,4 +1,4 @@
-import { apiInstance, BUS_ARRIVAL } from "./apiUtils";
+import { busApi, BUS_ARRIVAL } from "./apiUtils";
 
 const headers = {
   AccountKey: import.meta.env.VITE_LTA_API_KEY, // Set your own API key

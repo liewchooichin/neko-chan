@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
-import { apiInstance, BUS_ARRIVAL } from "./apiUtils";
+import { useEffect, useState, useContext } from "react";
+import { busApi, BUS_ARRIVAL } from "./apiUtils";
+import { BusServicesContext } from "./BusContext";
 
 
 export function BusInfo(){
-  
+  const busServicesCtx = useContext(BusServicesContext);
   const [busArrival, setBusArrival] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -15,7 +16,7 @@ export function BusInfo(){
       //   BusStopCode: "83139",
       //   ServiceNo: "15",
       // }
-      const response = await apiInstance.get(BUS_ARRIVAL,  
+      const response = await busApi.get(BUS_ARRIVAL,  
         {params:{BusStopCode: "83139", ServiceNo: "15"}});
       setBusArrival(response.data);
     }catch(error){
@@ -43,6 +44,11 @@ export function BusInfo(){
       <p>Bus stop code : {busArrival["BusStopCode"]}</p>
       <p>Service No. {busArrival["Services"][0]["ServiceNo"]}</p>
       <p>Operator {busArrival["Services"][0]["Operator"]}</p>
+      
+      <p>{busServicesCtx["value"][0]["ServiceNo"]}</p>
+      <p>{busServicesCtx["value"][0]["OriginCode"]}</p>
+      <p>{busServicesCtx["value"][0]["DestinationCode"]}</p>
+      
       </>
     )
   } else {
