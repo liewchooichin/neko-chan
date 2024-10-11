@@ -2,12 +2,20 @@ import { useState, useEffect, useMemo } from "react";
 import { BusServicesContext } from "./SampleBusServices";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import Table from "react-bootstrap/Table";
 
 export function SampleBusRoutes(){
   const [busRoutes, setBusRoutes] = useState([]);
   const [busServices, setBusServices] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [serviceNo, setServiceNo] = useState(-1); // bus service no
+  const [serviceNoInput, setServiceNoInput] = useState(""); // bus service no
+  // direction of bus route
+  const [serviceDirectionInput, setServiceDirectionInput] = useState(""); 
+  // The route info
+  const [direction1, setDirection1] = useState({origin1: "", dest1: "", loopDesc: ""});
+  const [direction2, setDirection2] = useState({origin2: "", dest2: ""});
+  const [route1, setRoute1] = useState([]);
+  const [route2, setRoute2] = useState([]);
 
   // Fetch Bus Services
   useEffect(()=>{
@@ -21,9 +29,9 @@ export function SampleBusRoutes(){
         );
         const response = await fetch(request);
         const data = await response.json();
-        console.log("Response ", response.status);
-        console.log("Data length", data.value.length);
-        console.log("Data[0", data.value[0]);
+        // console.log("Response ", response.status);
+        // console.log("Data length", data.value.length);
+        // console.log("Data[0", data.value[0]);
         if(!ignore){
           setBusServices(data.value);
         }
@@ -73,9 +81,9 @@ export function SampleBusRoutes(){
         );
         const response = await fetch(request);
         const data = await response.json();
-        console.log("Response ", response.status);
-        console.log("Data length", data.value.length);
-        console.log("Data[0", data.value[0]);
+        // console.log("Response ", response.status);
+        // console.log("Data length", data.value.length);
+        // console.log("Data[0", data.value[0]);
         if(!ignore){
           setBusRoutes(data.value);
         }
@@ -106,11 +114,144 @@ export function SampleBusRoutes(){
    *  "Operator": "GAS",
    *  "Direction": 1,
    *  "Category": "TRUNK", 
-   * "OriginCode": "65009",
-   *   "DestinationCode": "97009",
+   *  "OriginCode": "65009",
+   *  "DestinationCode": "97009",
    */
-  function assembleRoutes(serviceNo){
+  // Assemble the route sequence
+  function assembleRoutes(){
+    const route1 = [];
+    const route2 = [];
+    // Is there any bus service input
+    if(serviceNoInput === ""){
+      return {route1: [], route2: []};
+    }
+    // Find the bus service number from the unique
+    // bus service list.
+    // Get the OriginCode && StopSequence = first stop
+    // Get the DestinationCode && StopSequence = last stop
+    // Sequence the route one by one.
+    let tempList1, tempList2;
+    // Direction 1
+    tempList1 = busRoutes.filter((i)=>(
+      (i["ServiceNo"] === serviceNoInput) && 
+      (i["Direction"] === 1)
+    ))
+    console.log("temp list 1 ", tempList1);
+    console.log("len of temp list 1 ", tempList1.length);
+    // use the origin1 and dest1 for the BusStopCode.
+    // Then get the corresponding sequence number.
+    let tempItem;
+    // get the origin and dest
+    const {origin1, dest1, loopDesc, origin2, dest2} = getOriginDestInfo();
+    console.log("origin 1 ", origin1);
+    console.log("origin 1 type", typeof(origin1));
+    tempItem = tempList1.find((i)=>(
+      i["BusStopCode"].toString() === origin1
+    ))
+    console.log(tempItem);
+    console.log(tempItem.BusStopCode);
+    console.log("start sequence ", tempItem["StopSequence"]);
+    let start1 = tempItem["StopSequence"];
+    tempItem = tempList1.find((i)=>(
+      i["BusStopCode"] === dest1
+    ))
+    console.log("end sequence ", tempItem["StopSequence"]);
+    let end1 = tempItem["StopSequence"];
+    // Now use the sequence start and stop to get the list of
+    // bus stops of the route.
+    for(let num=start1; num<=end1; num++){
+      tempItem = tempList1.find((i)=>(
+        i["StopSequence"] === num
+      ))
+      route1.push(tempItem["BusStopCode"])
+    }
 
+    // Direction 2
+    tempList2 = busRoutes.filter((i)=>(
+      (i["ServiceNo"] === serviceNoInput) && 
+      (i["Direction"] === 2)
+    ))
+    // use the origin1 and dest1 for the BusStopCode.
+    // Then get the corresponding sequence number.
+    // get the origin and dest
+    console.log("origin 2 ", origin2);
+    console.log("origin 2 type", typeof(origin2));
+    tempItem = tempList2.find((i)=>(
+      i["BusStopCode"].toString() === origin2
+    ))
+    console.log(tempItem);
+    console.log(tempItem.BusStopCode);
+    console.log("start sequence ", tempItem["StopSequence"]);
+    let start2 = tempItem["StopSequence"];
+    tempItem = tempList2.find((i)=>(
+      i["BusStopCode"] === dest1
+    ))
+    console.log("end sequence ", tempItem["StopSequence"]);
+    let end2 = tempItem["StopSequence"];
+    // Now use the sequence start and stop to get the list of
+    // bus stops of the route.
+    for(let num=start2; num<=end2; num++){
+      tempItem = tempList2.find((i)=>(
+        i["StopSequence"] === num
+      ))
+      route2.push(tempItem["BusStopCode"])
+    }
+
+    // return the routes
+    return {route1: route1, route2: route2}
+  }
+
+  // Get origin, dest and loop info
+  function getOriginDestInfo(){
+    let tempItem1, tempItem2;
+    let info = {origin1: "", dest1: "", loopDesc: "",
+      origin2: "", dest2: "",
+    }
+    // Check for input
+    if(serviceNoInput === ""){
+      return info;
+    }
+    tempItem1 = busServices.find((i)=>(
+      (i.ServiceNo === serviceNoInput) &&
+      (i.Direction === 1)
+    ))
+    // Direction 1 is always available. 
+    // Loop service only have direction 1.
+    // Loop service will have LoopDesc.
+    if(tempItem1){
+      info = {origin1: tempItem1["OriginCode"],
+        dest1: tempItem1["DestinationCode"],
+        loopDesc: tempItem1["LoopDesc"]}
+    }
+    // check for direction 2
+    tempItem2 = busServices.find((i)=>(
+      (i.ServiceNo === serviceNoInput) && 
+      (i.Direction === 2)
+    ))
+    if(tempItem2){
+      info = {...info, origin2: tempItem2["OriginCode"],
+        dest2: tempItem2["DestinationCode"],
+      }
+    }
+    // return the info
+    return info;
+  }
+  
+  // event handler
+  function handleServiceNoInput(e){
+    const newInput = e.target.value;
+    setServiceNoInput(newInput);
+  }
+  // search the route
+  function  handleSearchRoute(e){
+    // Get the origin and destination bus stop code
+    const {origin1, dest1, loopDesc, origin2, dest2} = getOriginDestInfo();
+    setDirection1({origin1: origin1, dest1: dest1, loopDesc: loopDesc});
+    setDirection2({origin2: origin2, dest2: dest2})
+    // Call the function
+    const {route1, route2} = assembleRoutes();
+    setRoute1(route1);
+    setRoute2(route2);
   }
 
   // List the bus routes
@@ -121,22 +262,61 @@ export function SampleBusRoutes(){
   if(!isLoading && (busRoutes.length>0) &&(busServices.length>0)
     ){
     content = (<>
-      <h2>Bus service no {busRoutes[0]["ServiceNo"]}</h2>
+      {/*<h2>Bus service no {busRoutes[0]["ServiceNo"]}</h2>
       <p>Direction {busRoutes[0]["Direction"]}</p>
       <p>Origin: {busServices[0]["OriginCode"]}</p>
+      <p>Destination: {busServices[0]["DestinationCode"]}</p>
+      
       <p>Unique bus services</p>
-      <ul>
+       <ul>
         {
           //uniqueServiceNo.map((i, index)=>(
             uniqueServiceNo.map((i, index) => (
             <li key={i}>{index}. {i}</li>
           ))
         }
-      </ul>
+      </ul> */}
       <Form>
-        <Form.Label>Routes of service</Form.Label>
+        <Form.Label>Service</Form.Label>
+        <Form.Control
+          type="search"
+          name="serviceNoInput"
+          value={serviceNoInput}
+          list="listOfUniqueServiceNo"
+          onChange={handleServiceNoInput}
+        ></Form.Control>
+        <datalist id="listOfUniqueServiceNo">
+          {
+            uniqueServiceNo.map((i)=>(
+              <option key={i} value={i}></option>
+            ))
+          }
+        </datalist>
+        <Button
+          type="button"
+          name="btnSearchRoute"
+          onClick={handleSearchRoute}
+        >Search</Button>
       </Form>
-      <p>Routes of service {serviceNo}</p>
+      <h3>Routes of service {serviceNoInput}</h3>
+      <Table>
+          <thead>
+            <tr>
+              <th className="align-top">Direction 1<br/>Origin {direction1.origin1}<br/>Destination {direction1.dest1}<br/>{direction1.loopDesc ? (<>Loop at: {direction1.loopDesc}</>) : ""}</th>
+              <th className="align-top">Direction 2<br/>Origin {direction2.origin2}<br/>Destination {direction2.dest2}</th>
+            </tr>
+          </thead>
+          <tbody>
+            { route1.map((r, index)=>(
+            <tr key={r}>
+              <td>{r ? r : ""}</td>
+              <td>Lorem, ipsum dolor.</td>
+            </tr>
+            ))
+            }
+            
+          </tbody>
+      </Table>
     </>)
   }
 
