@@ -2,18 +2,123 @@
  * the bus services for the BusArrival page.
  */
 
-import { useState, useEffect } from "react";
-import { busApi, BUS_STOPS, BUS_SERVICES } from "./apiUtils";
-import { BusServicesContext, BusStopsContext } from "./BusContext";
-import { BusInfo } from "./BusInfo";
+import { useState, useEffect, useMemo } from "react";
+import { busApi, BUS_STOPS, BUS_SERVICES, BUS_ROUTES } from "./apiUtils";
+import { BusRoutesContext, BusServicesContext, BusStopsContext,
+  UniqueBusServicesContext, UniqueStopListContext,
+ } from "./BusContext";
+import { BusArrival } from "./BusArrival";
 
 export function BusMain(){
   // List of initial variables need to display the bus
   // stops for user to select.
-  const [busServices, setBusServices] = useState(null);
+  const [busServices, setBusServices] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [busStops, setBusStops] = useState([]);
+  const [busRoutes, setBusRoutes] = useState([]);
+  
+  // Fetch the bus routes
+  // Fetch the list of bus stops with names. No dependency.
+    // Fetch the list of bus services. No dependency
+    useEffect(()=>{
+      let ignore = false;
+      async function fetchBusRoutes(){
+        // the Datamall only return 500 records at a time.
+        // Counter to increase by 500 every loop.
+        // Check the length of the return list.
+        // If the list is less than 500, this is the last
+        // records.
+        const tempList = [];
+        let i = 0;
+        let dataLen = 0;
+        do {
+          const params = {"$skip": i};
+          try{
+            setIsLoading(true);
+            const response = await busApi.get(BUS_ROUTES, {params});
+            dataLen = response.data.value.length; // if 500 continue
+            // MUST NOT use [], push individual items.
+            tempList.push(...response.data.value); 
+            //console.log("Bus routes len ", tempList.length);
+            // next 500 records
+            i = i + 500;
+          } catch(error){
+            console.error(error);
+          }
+          finally{
+            setIsLoading(false);
+          }
+        } while(dataLen === 500);
+        // set the bus services list to this temp list
+        if(!ignore){setBusRoutes(tempList);}
+      }
+      // call fetch data
+      fetchBusRoutes();
+      // clean up the connection
+      return (()=>{ignore = true;})
+    }, [])
 
-  // Fetch the list of bus stops. No dependency
+  // Fetch the list of bus stops with names. No dependency.
+    // Fetch the list of bus services. No dependency
+    useEffect(()=>{
+      let ignore = false;
+      async function fetchBusStops(){
+        // the Datamall only return 500 records at a time.
+        // Counter to increase by 500 every loop.
+        // Check the length of the return list.
+        // If the list is less than 500, this is the last
+        // records.
+        const tempList = [];
+        let i = 0;
+        let dataLen = 0;
+        do {
+          const params = {"$skip": i};
+          try{
+            setIsLoading(true);
+            const response = await busApi.get(BUS_STOPS, {params});
+            dataLen = response.data.value.length; // if 500 continue
+            // MUST NOT use [], push individual items.
+            tempList.push(...response.data.value); 
+            //console.log("Bus stops len ", tempList.length);
+            // next 500 records
+            i = i + 500;
+          } catch(error){
+            console.error(error);
+          }
+          finally{
+            setIsLoading(false);
+          }
+        } while(dataLen === 500);
+        // set the bus services list to this temp list
+        if(!ignore){setBusStops(tempList);}
+      }
+      // call fetch data
+      fetchBusStops();
+      // clean up the connection
+      return (()=>{ignore = true;})
+    }, [])
+  // Put the bus stops into a unique list
+  // use memo for the unique service no
+  const uniqueStopList = useMemo(()=>{
+    // Get unique service no.
+    function getUniqueStopList(){
+      const newList = [];
+      if(!isLoading && (busStops.length>0)){
+        // Get the unique bus stops
+        // Actually every bus stops is unique.
+        // So, just put the BusStopCode into a new list.
+        for(let i=0; i<busStops.length; i++){
+            newList.push(busStops[i]["BusStopCode"]);
+        }
+      }
+      return newList;
+    }
+      // MUST return the list from the function call
+      return getUniqueStopList();
+    }, [busStops, isLoading])  
+
+
+  // Fetch the list of bus services. No dependency
   useEffect(()=>{
     let ignore = false;
     async function fetchBusServices(){
@@ -24,11 +129,16 @@ export function BusMain(){
       // records.
       const tempList = [];
       let i = 0;
+      let dataLen = 0;
       do {
         const params = {"$skip": i};
         try{
+          setIsLoading(true);
           const response = await busApi.get(BUS_SERVICES, {params});
-          tempList.push(response.data);
+          dataLen = response.data.value.length; // if 500 continue
+          // MUST NOT use [], push individual items.
+          tempList.push(...response.data.value); 
+          //console.log("Bus services len ", tempList.length);
           // next 500 records
           i = i + 500;
         } catch(error){
@@ -37,7 +147,7 @@ export function BusMain(){
         finally{
           setIsLoading(false);
         }
-      } while(tempList.length === 500);
+      } while(dataLen === 500);
       // set the bus services list to this temp list
       setBusServices(tempList);
     }
@@ -47,13 +157,53 @@ export function BusMain(){
     return (()=>{ignore = true;})
   }, [])
 
+  // use memo for the unique service no
+  const uniqueServiceNo = useMemo(()=>{
+    // Get unique service no.
+    function getUniqueServiceNo(){
+      const newList = [];
+      if(!isLoading && (busServices.length>0)){
+        // Get the unique bus stops
+        for(let i=0; i<busServices.length; i++){
+          if(newList.includes(busServices[i]["ServiceNo"])){
+            continue; // skip
+          }
+          else{
+            newList.push(busServices[i]["ServiceNo"]);
+          }
+        }
+      }
+      return newList;
+    }
+      // MUST return the list from the function call
+      return getUniqueServiceNo();
+    }, [busServices, isLoading])  
+
+    
   return(
     <>
     {(isLoading) && (<p>Loading ...</p>)}
-    {(!isLoading && busServices) && (
+    {(!isLoading && (busServices.length > 0) && 
+      (uniqueServiceNo.length > 0) && 
+      (busStops.length > 0) && 
+      (uniqueStopList.length > 0)) && (
+      <>
+      <h1>Bus Info Service</h1>
+      <p>Trivia</p>
+      <p>Number of unique bus services: {uniqueServiceNo.length}</p>
+      <p>Number of bus stops: {uniqueStopList.length}</p>
+      <BusStopsContext.Provider value={busStops}>
       <BusServicesContext.Provider value={busServices}>
-        <BusInfo />
+      <BusRoutesContext.Provider value={busRoutes}>
+      <UniqueStopListContext.Provider value={uniqueStopList}>
+      <UniqueBusServicesContext.Provider value={uniqueServiceNo}>
+        <BusArrival />
+      </UniqueBusServicesContext.Provider>
+      </UniqueStopListContext.Provider>
+      </BusRoutesContext.Provider>
       </BusServicesContext.Provider>
+      </BusStopsContext.Provider>
+      </>
     )}
     
     </>

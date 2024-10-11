@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { BusServicesContext } from "./SampleBusServices";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -8,7 +8,6 @@ export function SampleBusRoutes(){
   const [busServices, setBusServices] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [serviceNo, setServiceNo] = useState(-1); // bus service no
-  let uniqueServiceNo = [];
 
   // Fetch Bus Services
   useEffect(()=>{
@@ -40,22 +39,27 @@ export function SampleBusRoutes(){
     return(()=>{ignore = true})
   }, []);
 
-  // Get unique service no.
-  function getUniqueServiceNo(){
-    const newList = [];
-    if(!isLoading && (busServices.length>0)){
-      // Get the unique bus stops
-      for(let i=0; i<busServices.length; i++){
-        if(newList.includes(busServices[i]["ServiceNo"])){
-          continue; // skip
-        }
-        else{
-          newList.push(busServices[i]["ServiceNo"]);
+  // use memo for the unique service no
+  const uniqueServiceNo = useMemo(()=>{
+    // Get unique service no.
+    function getUniqueServiceNo(){
+      const newList = [];
+      if(!isLoading && (busServices.length>0)){
+        // Get the unique bus stops
+        for(let i=0; i<busServices.length; i++){
+          if(newList.includes(busServices[i]["ServiceNo"])){
+            continue; // skip
+          }
+          else{
+            newList.push(busServices[i]["ServiceNo"]);
+          }
         }
       }
+      return newList;
     }
-    return newList;
-  }
+      // MUST return the list from the function call
+      return getUniqueServiceNo();
+    }, [busServices, isLoading])
 
   // Fetch Bus Routes
   useEffect(()=>{
@@ -124,7 +128,7 @@ export function SampleBusRoutes(){
       <ul>
         {
           //uniqueServiceNo.map((i, index)=>(
-            getUniqueServiceNo().map((i, index) => (
+            uniqueServiceNo.map((i, index) => (
             <li key={i}>{index}. {i}</li>
           ))
         }

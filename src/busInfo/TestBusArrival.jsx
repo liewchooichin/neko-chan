@@ -1,10 +1,12 @@
 import { useEffect, useState, useContext } from "react";
 import { busApi, BUS_ARRIVAL } from "./apiUtils";
-import { BusServicesContext } from "./BusContext";
+import { BusServicesContext, BusStopsContext, UniqueBusServicesContext } from "./BusContext";
 
 
-export function BusInfo(){
-  const busServicesCtx = useContext(BusServicesContext);
+export function TestBusArrival(){
+  const busStops = useContext(BusStopsContext);
+  const busServices = useContext(BusServicesContext);
+  const uniqueServiceNo = useContext(UniqueBusServicesContext);
   const [busArrival, setBusArrival] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -36,7 +38,7 @@ export function BusInfo(){
   }, [])
 
   let content;
-  if((busArrival && !isLoading))
+  if((busServices.length>0 && busArrival && !isLoading))
   {
     content = (
       <>
@@ -45,9 +47,20 @@ export function BusInfo(){
       <p>Service No. {busArrival["Services"][0]["ServiceNo"]}</p>
       <p>Operator {busArrival["Services"][0]["Operator"]}</p>
       
-      <p>{busServicesCtx["value"][0]["ServiceNo"]}</p>
-      <p>{busServicesCtx["value"][0]["OriginCode"]}</p>
-      <p>{busServicesCtx["value"][0]["DestinationCode"]}</p>
+      <p>{busServices[0]["ServiceNo"]}</p>
+      <p>{busServices[0]["OriginCode"]}</p>
+      <p>{busServices[0]["DestinationCode"]}</p>
+      
+      <h2>Bus service no {busStops[0]["BusStopCode"]}</h2>
+      <p>Road name {busStops[0]["RoadName"]}</p>
+      <p>Description {busStops[0]["Description"]}</p>
+      
+
+      <ul>
+        {
+          uniqueServiceNo.map((i)=>(<li key={i}>{i}</li>))
+        }
+      </ul>
       
       </>
     )
