@@ -8,6 +8,8 @@ import { BusRoutesContext, BusServicesContext, BusStopsContext,
   UniqueBusServicesContext, UniqueStopListContext,
  } from "./BusContext";
 import { BusArrival } from "./BusArrival";
+import { BusRoutes } from "./BusRoutes";
+
 
 export function BusMain(){
   // List of initial variables need to display the bus
@@ -198,6 +200,7 @@ export function BusMain(){
       <UniqueStopListContext.Provider value={uniqueStopList}>
       <UniqueBusServicesContext.Provider value={uniqueServiceNo}>
         <BusArrival />
+        <BusRoutes />
       </UniqueBusServicesContext.Provider>
       </UniqueStopListContext.Provider>
       </BusRoutesContext.Provider>

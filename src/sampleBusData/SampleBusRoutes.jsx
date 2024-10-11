@@ -9,8 +9,8 @@ export function SampleBusRoutes(){
   const [busServices, setBusServices] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [serviceNoInput, setServiceNoInput] = useState(""); // bus service no
-  // direction of bus route
-  const [serviceDirectionInput, setServiceDirectionInput] = useState(""); 
+  // direction of bus route, default to 1.
+  const [serviceDirectionInput, setServiceDirectionInput] = useState(1); 
   // The route info
   const [direction1, setDirection1] = useState({origin1: "", dest1: "", loopDesc: ""});
   const [direction2, setDirection2] = useState({origin2: "", dest2: ""});
@@ -184,7 +184,7 @@ export function SampleBusRoutes(){
     console.log("start sequence ", tempItem["StopSequence"]);
     let start2 = tempItem["StopSequence"];
     tempItem = tempList2.find((i)=>(
-      i["BusStopCode"] === dest1
+      i["BusStopCode"] === dest2
     ))
     console.log("end sequence ", tempItem["StopSequence"]);
     let end2 = tempItem["StopSequence"];
@@ -242,6 +242,11 @@ export function SampleBusRoutes(){
     const newInput = e.target.value;
     setServiceNoInput(newInput);
   }
+  function handleDirectionInput(e){
+    const newInput = e.target.value;
+    console.log("Target value ", newInput);
+    setServiceDirectionInput(newInput);
+  }
   // search the route
   function  handleSearchRoute(e){
     // Get the origin and destination bus stop code
@@ -252,6 +257,25 @@ export function SampleBusRoutes(){
     const {route1, route2} = assembleRoutes();
     setRoute1(route1);
     setRoute2(route2);
+  }
+
+  // List the direction
+  let directionResult;
+  if(serviceDirectionInput==="1"){
+    directionResult = 
+      (route1.map((r, index)=>(
+        <tr key={r}>
+          <td>{r ? r : ""}</td>
+        </tr>
+        )))
+  }
+  if(serviceDirectionInput==="2"){
+    directionResult = 
+      (route2.map((r, index)=>(
+        <tr key={r}>
+          <td>{r ? r : ""}</td>
+        </tr>
+        )))
   }
 
   // List the bus routes
@@ -277,6 +301,7 @@ export function SampleBusRoutes(){
         }
       </ul> */}
       <Form>
+        <Form.Group>
         <Form.Label>Service</Form.Label>
         <Form.Control
           type="search"
@@ -292,6 +317,27 @@ export function SampleBusRoutes(){
             ))
           }
         </datalist>
+        </Form.Group>
+        <Form.Group>
+          <Form.Check
+            id="radioDirection1"
+            name="radioDirection"
+            type="radio"
+            label="Direction 1"
+            value="1"
+            checked={serviceDirectionInput==="1"}
+            onChange={handleDirectionInput}
+          ></Form.Check>
+          <Form.Check
+            id="radioDirection2"
+            name="radioDirection"
+            type="radio"
+            label="Direction 2"
+            value="2"
+            checked={serviceDirectionInput==="2"}
+            onChange={handleDirectionInput}
+          ></Form.Check>
+        </Form.Group>
         <Button
           type="button"
           name="btnSearchRoute"
@@ -302,19 +348,21 @@ export function SampleBusRoutes(){
       <Table>
           <thead>
             <tr>
-              <th className="align-top">Direction 1<br/>Origin {direction1.origin1}<br/>Destination {direction1.dest1}<br/>{direction1.loopDesc ? (<>Loop at: {direction1.loopDesc}</>) : ""}</th>
-              <th className="align-top">Direction 2<br/>Origin {direction2.origin2}<br/>Destination {direction2.dest2}</th>
+              {(serviceDirectionInput==="1") && (
+                <th className="align-top">Direction 1<br/>
+                Origin {direction1.origin1}<br/>
+                Destination {direction1.dest1}<br/>
+                {direction1.loopDesc 
+                ? (<>Loop at: {direction1.loopDesc}</>) : ""}</th>)}
+              
+              {(serviceDirectionInput==="2") && (
+                <th className="align-top">Direction 2<br/>
+                Origin {direction2.origin2}<br/>
+                Destination {direction2.dest2}</th>)}
             </tr>
           </thead>
           <tbody>
-            { route1.map((r, index)=>(
-            <tr key={r}>
-              <td>{r ? r : ""}</td>
-              <td>Lorem, ipsum dolor.</td>
-            </tr>
-            ))
-            }
-            
+            {directionResult}
           </tbody>
       </Table>
     </>)
