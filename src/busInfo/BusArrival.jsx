@@ -120,6 +120,25 @@ export function BusArrival(){
     return getBusServiceNoOfBusStopCode();
 }, [uniqueStopList, busRoutes, busStopCodeInput])
 
+  // Get the bus stop name and description
+  const {roadName, stopDesc} = useMemo(()=>{
+    let currentStop;
+    function getStopInfo(){
+      let info;
+      currentStop = busStops.find((i)=>(
+        i.BusStopCode === busStopCodeInput
+      ));
+      if(currentStop){
+        info = {roadName: currentStop.RoadName,
+            stopDesc: currentStop.Description,}
+      } else {
+        info = {roadName: "", stopDesc: ""}
+      }
+      return info;
+  }
+  return getStopInfo();
+  }, [busStops, busStopCodeInput])
+
   // Event handler
   // Input to bus stop code
   function handleBusStopCodeInput(e){
@@ -184,12 +203,14 @@ export function BusArrival(){
           }
         </datalist>
         <small>{busStopCodeErrorMessage}</small>
-        <p>Bus service number</p>
+        <p>Road name: {roadName}</p>
+        <p>Bus stop: {stopDesc}</p>
+        <p>Bus service number
         {((listOfServiceNo.length > 0)&&(
           listOfServiceNo.map((i)=>(
             <span key={i}>{i}, </span>
           ))
-        ))}
+        ))}</p>
         </Form.Group>
 
         <Form.Group>
@@ -237,20 +258,26 @@ export function BusArrival(){
               Estimated {calculateEstimatedArrivalTime(i.NextBus.EstimatedArrival)} min<br/>
               {(i.NextBus.Monitored===0) && (<>Based on schedule</>)}
               {(i.NextBus.Monitored===1) && (<>Based on bus location</>)}
+              {(i.NextBus.Feature==="WAB") && (<p><i className="bi bi-person-wheelchair"></i></p>)}
+              {(i.NextBus.Feature==="") && (<p>Not wheelchair assessible</p>)}
             </ListGroup.Item>
           )}
           {i.NextBus2 && (
             <ListGroup.Item>
-              Estimated {calculateEstimatedArrivalTime(i.NextBus2.EstimatedArrival)} <br/>
+              Estimated {calculateEstimatedArrivalTime(i.NextBus2.EstimatedArrival)} min<br/>
               {(i.NextBus2.Monitored===0) && (<>Based on schedule</>)}
               {(i.NextBus2.Monitored===1) && (<>Based on bus location</>)}
+              {(i.NextBus2.Feature==="WAB") && (<p><i className="bi bi-person-wheelchair"></i></p>)}
+              {(i.NextBus2.Feature==="") && (<p>Not wheelchair assessible</p>)}
             </ListGroup.Item>
           )}
           {i.NextBus3 && (
             <ListGroup.Item>
-              Estimated {calculateEstimatedArrivalTime(i.NextBus3.EstimatedArrival)} <br/>
+              Estimated {calculateEstimatedArrivalTime(i.NextBus3.EstimatedArrival)} min<br/>
               {(i.NextBus3.Monitored===0) && (<>Based on schedule</>)}
               {(i.NextBus3.Monitored===1) && (<>Based on bus location</>)}
+              {(i.NextBus3.Feature==="WAB") && (<p><i className="bi bi-person-wheelchair"></i></p>)}
+              {(i.NextBus3.Feature==="") && (<p>Not wheelchair assessible</p>)}
             </ListGroup.Item>
           )}
         </ListGroup>
