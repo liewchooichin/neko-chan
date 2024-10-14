@@ -1,4 +1,4 @@
-/**The main bus page that will download the bus stops and
+/**The main bus page that will download the bus stops, bus routes, and
  * the bus services for the BusArrival page.
  */
 

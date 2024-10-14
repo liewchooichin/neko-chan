@@ -1,4 +1,4 @@
-/**The main bus page that will download the bus stops, bus routes, and
+/**The main bus page that will download the bus stops and
  * the bus services for the BusArrival page.
  */
 
@@ -39,7 +39,11 @@ export function BusMain(){
             setIsLoading(true);
             const response = await busApi.get(BUS_ROUTES, {params});
             dataLen = response.data.value.length; // if 500 continue
-            // MUST NOT use [], push individual items.
+            // Push individual items of the response data into the list.
+            // Cannot push response.data as an [], like tempList.push(
+            // response.data). Because this will push the array [response.
+            // data] into the tempList. The tempList becomes [[data-1],
+            // [data-2], ... [data-n]].
             tempList.push(...response.data.value); 
             //console.log("Bus routes len ", tempList.length);
             // next 500 records

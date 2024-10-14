@@ -181,11 +181,11 @@ export function BusArrival(){
   {
     content = (
       <>
-      <form>
-        <label htmlFor="busStopCodeInput"
-        >Bus stop code <span style={{color:"red"}}>*</span>
-        </label>
-        <input
+      <Form>
+        <Form.Group>
+        <Form.Label
+        >Bus stop code <span className="text-danger">*</span></Form.Label>
+        <Form.Control
           id="busStopCodeInput"
           name="busStopCodeInput"
           type="search"
@@ -194,7 +194,7 @@ export function BusArrival(){
           placeholder="83139"
           value={busStopCodeInput}
           onChange={handleBusStopCodeInput}
-        ></input>
+        ></Form.Control>
         <datalist id="listOfBusStopCodes">
           {
             uniqueStopList.map((i)=>(
@@ -211,11 +211,12 @@ export function BusArrival(){
             <span key={i}>{i}, </span>
           ))
         ))}</p>
+        </Form.Group>
 
-
-        <label htmlFor="busServiceNoInput">
-        Service number</label>
-        <input
+        <Form.Group>
+        <Form.Label
+        >Service number</Form.Label>
+        <Form.Control
           id="busServiceNoInput"
           name="busServiceNoInput"
           type="search"
@@ -223,7 +224,7 @@ export function BusArrival(){
           placeholder="Optional"
           value={busServiceNoInput}
           onChange={handleBusServiceNoInput}
-        ></input>
+        ></Form.Control>
         <datalist id="listOfBusServiceNo">
           {
             listOfServiceNo.map((i)=>(
@@ -232,13 +233,14 @@ export function BusArrival(){
           }
         </datalist>
         <small>{busServiceErrorMessage}</small>
-      </form>
+        </Form.Group>
 
-      <button
+      </Form>
+      <Button
         type="button"
         name="btnSearchBusStopCode"
         onClick={handleSearchBusStopCode}
-      >Search</button>
+      >Search</Button>
       </>
     )} else {
     content = (<p>Loading page ....</p>)
@@ -249,36 +251,36 @@ export function BusArrival(){
   if(!isLoading && busArrival){
     resultContent = (
       busArrival["Services"].map((i)=>(
-        <ul key={i.ServiceNo} variant="flush">
+        <ListGroup key={i.ServiceNo} variant="flush">
           <h3>Service No. {i.ServiceNo}</h3>
           {i.NextBus && (
-            <li>
+            <ListGroup.Item>
               Estimated {calculateEstimatedArrivalTime(i.NextBus.EstimatedArrival)} min<br/>
               {(i.NextBus.Monitored===0) && (<>Based on schedule</>)}
               {(i.NextBus.Monitored===1) && (<>Based on bus location</>)}
-              {(i.NextBus.Feature==="WAB") && (<p>Wheelchair assessible</p>)}
+              {(i.NextBus.Feature==="WAB") && (<p><i className="bi bi-person-wheelchair"></i></p>)}
               {(i.NextBus.Feature==="") && (<p>Not wheelchair assessible</p>)}
-            </li>
+            </ListGroup.Item>
           )}
           {i.NextBus2 && (
-            <li>
+            <ListGroup.Item>
               Estimated {calculateEstimatedArrivalTime(i.NextBus2.EstimatedArrival)} min<br/>
               {(i.NextBus2.Monitored===0) && (<>Based on schedule</>)}
               {(i.NextBus2.Monitored===1) && (<>Based on bus location</>)}
-              {(i.NextBus2.Feature==="WAB") && (<p>Wheelchair assessible</p>)}
+              {(i.NextBus2.Feature==="WAB") && (<p><i className="bi bi-person-wheelchair"></i></p>)}
               {(i.NextBus2.Feature==="") && (<p>Not wheelchair assessible</p>)}
-            </li>
+            </ListGroup.Item>
           )}
           {i.NextBus3 && (
-            <li>
+            <ListGroup.Item>
               Estimated {calculateEstimatedArrivalTime(i.NextBus3.EstimatedArrival)} min<br/>
               {(i.NextBus3.Monitored===0) && (<>Based on schedule</>)}
               {(i.NextBus3.Monitored===1) && (<>Based on bus location</>)}
-              {(i.NextBus3.Feature==="WAB") && (<p>Wheelchair assessible</p>)}
+              {(i.NextBus3.Feature==="WAB") && (<p><i className="bi bi-person-wheelchair"></i></p>)}
               {(i.NextBus3.Feature==="") && (<p>Not wheelchair assessible</p>)}
-            </li>
+            </ListGroup.Item>
           )}
-        </ul>
+        </ListGroup>
       )))}
   else {
     resultContent = (<p>Results</p>)
