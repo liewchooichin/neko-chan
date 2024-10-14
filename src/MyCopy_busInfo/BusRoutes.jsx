@@ -306,15 +306,16 @@ export function BusRoutes(){
   if(!isLoading && (busRoutes.length>0) &&(busServices.length>0)
     ){
     content = (<>
-      <form>
-        <label>Service</label>
-        <input
+      <Form>
+        <Form.Group>
+        <Form.Label>Service</Form.Label>
+        <Form.Control
           type="search"
           name="serviceNoInput"
           value={serviceNoInput}
           list="listOfUniqueServiceNo"
           onChange={handleServiceNoInput}
-        ></input>
+        ></Form.Control>
         <datalist id="listOfUniqueServiceNo">
           {
             uniqueServiceNo.map((i)=>(
@@ -322,9 +323,9 @@ export function BusRoutes(){
             ))
           }
         </datalist>
-        
-        <div>
-        <input
+        </Form.Group>
+        <Form.Group>
+          <Form.Check
             id="radioDirection1"
             name="radioDirection"
             type="radio"
@@ -332,28 +333,25 @@ export function BusRoutes(){
             value="1"
             checked={serviceDirectionInput==="1"}
             onChange={handleDirectionInput}
-          ></input>
-          <label htmlFor="radioDirection1">Direction 1</label>
-          </div>
-          <div>
-          <input
+          ></Form.Check>
+          <Form.Check
             id="radioDirection2"
             name="radioDirection"
             type="radio"
+            label="Direction 2"
             value="2"
             checked={serviceDirectionInput==="2"}
             onChange={handleDirectionInput}
-          ></input>
-          <label htmlFor="radioDirection2">Direction 2</label>
-          </div>
-        <button
+          ></Form.Check>
+        </Form.Group>
+        <Button
           type="button"
           name="btnSearchRoute"
           onClick={handleSearchRoute}
-        >Search</button>
-      </form>
+        >Search</Button>
+      </Form>
       <h3>Routes of service {serviceNoInput}</h3>
-      <table>
+      <Table>
           <thead>
             <tr>
               {(serviceDirectionInput==="1") && (
@@ -394,7 +392,7 @@ export function BusRoutes(){
           <tbody>
             {directionResult}
           </tbody>
-      </table>
+      </Table>
     </>)
   }
 

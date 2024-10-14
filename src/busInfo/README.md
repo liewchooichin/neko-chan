@@ -8,6 +8,15 @@ I want to try a simple page where users can add to favorites or wishlist.
 
 ## Datamall
 
+## To use the component
+
+There is only one component **BusMain** to be called.
+
+```
+# Depends on your directory. This is the path that I am using.
+import { BusMain } from "../busInfo/BusMain"; 
+```
+
 Create a **.env** to put in the API Key.
 
 ```
