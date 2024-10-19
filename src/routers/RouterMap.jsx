@@ -19,6 +19,7 @@ import { SampleBusArrival } from "../sampleBusData/SampleBusArrival";
 import { SampleBusServices } from "../sampleBusData/SampleBusServices";
 import { SampleBusRoutes } from "../sampleBusData/SampleBusRoutes";
 import { SampleBusStops } from "../sampleBusData/SampleBusStops";
+import { BusTrackingMain } from "../busTracking/BusTrackingMain";
 
 
 export const router = createBrowserRouter([
@@ -50,6 +51,10 @@ export const router = createBrowserRouter([
       {
         path: "bus-main",
         element: <BusMain />
+      },
+      {
+        path: "bus-tracking",
+        element: <BusTrackingMain />
       },
       {
         path: "bus-services",
