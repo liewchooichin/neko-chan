@@ -11,7 +11,7 @@ import { BusServicesContext, UniqueBusServicesContext,
   BusServicesLoadingContext
  } from "./BusServicesContext";
 import { BusRoutesContext, BusRoutesLoadingContext } from "./BusRoutesContext";
-import { BusRoutesWithDistances } from "./BusRoutesWithDistances";
+
 
 export function BusRoutesWithTracking(){
   // Loading the context.
@@ -73,8 +73,7 @@ export function BusRoutesWithTracking(){
   return(
     <>
     {content}
-    <Button>Get nearest bus stops</Button>
-    <BusRoutesWithDistances></BusRoutesWithDistances>
+    
     </>
   )
 }

@@ -8,6 +8,9 @@ import { BusRoutesContext, BusRoutesLoadingContext } from "./BusRoutesContext";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Table from "react-bootstrap/Table";
+import ListGroup from "react-bootstrap/ListGroup";
+import { haversineDistance } from "./utilsHaversine";
+
 
 export function BusRoutesWithDistances(){
   // Context of various data
@@ -27,6 +30,24 @@ export function BusRoutesWithDistances(){
   // The route info
   const [direction, setDirection] = useState({origin: "", dest: "", loopDesc: ""});
   const [route, setRoute] = useState([]);
+    // states related to tracking
+  // states for stopDistances = [{busStopCode: busStopCode, 
+  //    distance: distance}] -- distance from each bus stop in
+  //    the route.
+  const [stopDistances, setStopDistances] = useState([]);
+  // states of the current location. This will be used to calculate
+  // the differences in distances of all the bus stops.
+  // coordinate in (lat, lng) format.
+  // Need to make a call to the build-in Javascript navigator 
+  // function.
+  // coordinate = {lat, lng, accuracy}
+  const [currentCoordinate, setCurrentCoordinate] = useState(null);
+  // To get the place name, need to get reverse geo-coding
+  // to HERE API. 
+  // TODO: When the distance is completed, I will add in the rev-geocoding.
+  const [currentPlaceName, setCurrentPlaceName] = useState(null);
+  // Error message for any errors that can occur
+  const [errorMessage, setErrorMessage] = useState(null);
 
   // get the road name of a bus stop
   function getRoadName(busStopCode){
@@ -116,8 +137,8 @@ export function BusRoutesWithDistances(){
       (i["ServiceNo"] === serviceNoInput) && 
       (i["Direction"] === serviceDirectionInput)
     ))
-    console.log("temp list  ", tempList);
-    console.log("len of temp list ", tempList.length);
+    //console.log("temp list  ", tempList);
+    //console.log("len of temp list ", tempList.length);
     // use the origin1 and dest1 for the BusStopCode.
     // Then get the corresponding sequence number.
     let tempItem;
@@ -142,7 +163,7 @@ export function BusRoutesWithDistances(){
     tempItem = tempList.find((i)=>(
       i["BusStopCode"] === origin
     ))
-    console.log("start sequence ", tempItem["StopSequence"]);
+    //console.log("start sequence ", tempItem["StopSequence"]);
     // Start of sequence number
     let startNum = tempItem["StopSequence"];
     // Find dest1. Find last index to take care of 
@@ -152,7 +173,7 @@ export function BusRoutesWithDistances(){
     tempItem = tempList.findLast((i)=>(
       i["BusStopCode"] === dest
     ))
-    console.log("end sequence ", tempItem["StopSequence"]);
+    //console.log("end sequence ", tempItem["StopSequence"]);
     // End of sequence number
     let endNum = tempItem["StopSequence"];
     // Now use the sequence start and stop to get the list of
@@ -165,10 +186,12 @@ export function BusRoutesWithDistances(){
         return (i["StopSequence"] === num)
     })
       // sometimes sequence number is skipped.
-      console.log("In loop , item ", tempItem);
+      //console.log("In loop , item ", tempItem);
       if(!tempItem){
         continue;
       }
+      // if the sequence number is found, add 
+      // the bus stop to the state.
       else{
         route.push(tempItem["BusStopCode"]);
       }
@@ -190,25 +213,20 @@ export function BusRoutesWithDistances(){
   function getOriginDestInfo(){
     let info = {origin: "", dest: "", loopDesc: ""};
     // Check for input
-    console.log("In get origin dest, service no ", serviceNoInput);
-    console.log("In get origin dest, direction ", serviceDirectionInput);
+    //console.log("In get origin dest, service no ", serviceNoInput);
+    //console.log("In get origin dest, direction ", serviceDirectionInput);
     if(serviceNoInput === ""){
       return info; // empty info
     }
     // Get the service no and direction 1 first
     
     let tempItem1 = busServices.find((i, index)=>{
-      if(index===0){
-      console.log("In finding item");
-      console.log("Type of service ", typeof(i.ServiceNo));
-      console.log("Type of direction ", typeof(i.Direction));
-      }
       return(
         (i.ServiceNo === serviceNoInput) &&
         (i.Direction === 1)
       )
     })
-    console.log("In get origin dest ", tempItem1);
+    //console.log("In get origin dest ", tempItem1);
     // Check for destination==origin. If loop service, skip
     // direction 2.
     if((tempItem1["OriginCode"]!==tempItem1["DestinationCode"])){
@@ -260,6 +278,69 @@ export function BusRoutesWithDistances(){
     const route = assembleRoutes();
     setRoute(route);
   }
+  // handle get nearest bus stops
+  // First, call the browser navigator to get the coordinate.
+  // Then calculate the distance of the current coordinate from
+  // each of the bus stops
+  function handleNearestBusStops(e){
+    // options of browser navigator
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0,
+    }
+    // if the browser navigator can locate the coordinate
+    function success(pos){
+      console.log("Current position ");
+      console.log("Lat ", pos.coords.latitude);
+      console.log("Lng ", pos.coords.longitude);
+      console.log("Accuracy ", pos.coords.accuracy, "metres");
+      // Accuracy is optional. For debug purpose.
+      setCurrentCoordinate({
+        lat: pos.coords.latitude, 
+        lng: pos.coords.longitude,
+        accuracy: Number.parseFloat(pos.coords.accuracy).toFixed(2),
+      });
+    }
+    // handle error from the browser navigator
+    function error(err){
+      console.warn(`Error: ${err.code}, {err.message}`);
+    }
+    // call the browser navigator
+    navigator.geolocation.getCurrentPosition(success, error, options);
+    // Call the function to calculate the distance between the two points.
+    let newList = [];
+    // Calculate the distance of the current location and the bus stops in
+    // the route one by one.
+    for(let i=0; i<route.length; i++){
+      // find the bus stops lat and lng first
+      const tempItem = busStops.find((item)=>(
+        item.BusStopCode === route[i]
+      ))
+      // check that tempItem is not null
+      //console.log("In calculate distance ", tempItem);
+      if(!tempItem){
+        setErrorMessage("Cannot find distances between bus stops " + 
+          "and current location.");
+        return;
+      }
+      // calculate the distance
+      const distance = haversineDistance(
+        tempItem["Latitude"], tempItem["Longitude"],
+        currentCoordinate.lat, currentCoordinate.lng
+      );
+      // push the {busStopCode, distance} into the distances state
+      newList.push({
+        busStopCode: route[i],
+        distance: distance,
+      });
+    }
+    // we sort the list ascending(from smallest to largest), so that later
+    // we can get the top three items.
+    let sortedList = newList.sort((a, b)=>(a.distance-b.distance));
+    // After we have gone through the route, push the list to the state
+    setStopDistances(sortedList);
+  }
 
   // List the direction
   let directionResult;
@@ -278,6 +359,30 @@ export function BusRoutesWithDistances(){
         )))
   }
 
+  // list the nearest bus stops
+  let nearestBusStopsResult;
+  if(stopDistances.length > 0){
+    nearestBusStopsResult = (
+      <>
+      <h3>Nearest bus stops</h3>
+      <ListGroup>
+      <ListGroup.Item>Current coordinate: 
+          Lat {currentCoordinate.lat}, Lng {currentCoordinate.lng}
+      </ListGroup.Item>
+      {stopDistances.map((item, index)=>(
+          <ListGroup.Item key={`${index}_${item.busStopCode}`}>
+            Bus stop code: {item.busStopCode} <br/>
+            Place: {getRoadDescription(item.busStopCode)}<br/>
+            Road: {getRoadName(item.busStopCode)}<br/>
+            Distance: {item.distance.toFixed(2)} metres <br/>
+          </ListGroup.Item>))}
+      </ListGroup>
+      </>
+    )
+  } else{
+    nearestBusStopsResult = (<></>);
+  }
+  
   // List the bus routes
   let content;
   if(stopsLoading || servicesLoading || routesLoading){
@@ -331,6 +436,17 @@ export function BusRoutesWithDistances(){
           onClick={handleSearchRoute}
         >Search</Button>
       </Form>
+      <h3>Track nearest bus stops</h3>
+      <Button
+        type="button"
+        id="btnNearestBusStops"
+        name="btnNearestBusStops"
+        onClick={handleNearestBusStops}
+      >Get nearest bus stops</Button>
+      {errorMessage ? (<p>{"Error: " + errorMessage}</p>) : ""}
+      
+      {nearestBusStopsResult}
+      
       <h3>Routes of service {serviceNoInput}</h3>
       <Table variant="flush">
           <thead>

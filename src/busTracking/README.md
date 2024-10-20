@@ -19,5 +19,17 @@ by the next nearest one.
 - the criteria will be about xx meters away. I will test and trial what xx distance is the most optimal.
 - The top three in the array will be displayed to the users.
 
+## Data in BusServices
+
+In bus services data, some loop bus will have both direction 1 and 2 and LoopDesc like bus 359.
+
+But for some, there is only direction 1 and LoopDesc, like bus 120, 121, 122.
+
+When I assemble the bus route I need to first check for the direction 1 first. Then, I compare whether
+the Origin==Destination to check for loop condition.
+
+If Origin and Destination are not the same, then I proceed to get the item in BusServices for Direction 2.
+
+
 
 
