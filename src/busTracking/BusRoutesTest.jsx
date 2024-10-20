@@ -13,7 +13,7 @@ import { BusServicesContext, UniqueBusServicesContext,
 import { BusRoutesContext, BusRoutesLoadingContext } from "./BusRoutesContext";
 
 
-export function BusRoutesWithTracking(){
+export function BusRoutesTest(){
   // Loading the context.
   // load the bus stops related context
   const busStopsCtx = useContext(BusStopsContext);
@@ -63,7 +63,7 @@ export function BusRoutesWithTracking(){
       <h3>Length of bus stops: {busStopsCtx.length}</h3>
       <h3>Number of bus stops: {uniqueStopListCtx.length}</h3>
       <h3>Number of bus services: {busServicesCtx.length}</h3>
-      <h3>Number of bus routes: {busRoutesCtx.length}</h3>
+      <h3>Number of bus routes: {busRoutesCtx.length} (the longest time, wait untill the number appears for bus routes to be loaded)</h3>
       <h3>Bus service 0: {uniqueServicesCtx[0]}</h3>
       <h3>Bus service 1: {uniqueServicesCtx[1]}</h3>
       <h2>Test Data --- End ---</h2>

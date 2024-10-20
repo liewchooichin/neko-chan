@@ -302,7 +302,14 @@ export function BusRoutesWithDistances(){
   function handleNearestBusStops(e){
     // Make sure the bus routes exists
     if(route.length===0 || !route){
+      setErrorMessage("To use the tracking service, " 
+        + "select a bus service number and direction " 
+        + "and click Search."
+      )
       return;
+    } else{
+      // clear the error message
+      setErrorMessage("");
     }
     // options of browser navigator
     const options = {
@@ -391,6 +398,7 @@ export function BusRoutesWithDistances(){
   let nearestBusStopsResult;
   if(!isLoading && stopDistances.length>0 && 
     currentCoordinate && currentPlaceName){
+    // For debug purpose, I print out the whole distance list
     nearestBusStopsResult = (
       <>
       <h3>Nearest bus stops</h3>
@@ -399,13 +407,12 @@ export function BusRoutesWithDistances(){
           Place {currentPlaceName.items[0]["title"]}<br/>
           Lat {currentCoordinate.lat}, Lng {currentCoordinate.lng}
       </ListGroup.Item>
-      {stopDistances.map((item, index)=>(
-          <ListGroup.Item key={`${index}_${item.busStopCode}`}>
-            Bus stop code: {item.busStopCode} <br/>
-            Place: {getRoadDescription(item.busStopCode)}<br/>
-            Road: {getRoadName(item.busStopCode)}<br/>
-            Distance: {item.distance.toFixed(2)} metres <br/>
-          </ListGroup.Item>))}
+        <ListGroup.Item>
+          Bus stop code: {stopDistances[0].busStopCode} <br/>
+          Place: {getRoadDescription(stopDistances[0].busStopCode)}<br/>
+          Road: {getRoadName(stopDistances[0].busStopCode)}<br/>
+          Distance: {stopDistances[0].distance.toFixed(2)} metres <br/>
+        </ListGroup.Item>
       </ListGroup>
       </>
     )
@@ -473,6 +480,7 @@ export function BusRoutesWithDistances(){
         name="btnNearestBusStops"
         onClick={handleNearestBusStops}
       >Get nearest bus stops</Button>
+      <small>First click will not work, need to click the second time for it to work. TODO: Why?</small>
       {errorMessage ? (<p>{"Error: " + errorMessage}</p>) : ""}
       
       {nearestBusStopsResult}

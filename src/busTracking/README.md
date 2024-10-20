@@ -1,5 +1,16 @@
 # Bus Stop Tracking
 
+## To use this component
+
+### Step 1
+Add to your **.env** the [HERE API key](https://www.here.com/docs/bundle/getting-here-credentials/page/README.html).
+
+VITE_HERE_API_KEY=<YOUR_HERE_API_KEY>
+
+### Step 2
+
+Include the component **`<BusTrackingMain />`** to your main router.
+
 ## Considerations
 
 The sequence of bus routes is already extracted in BusRoutes. 

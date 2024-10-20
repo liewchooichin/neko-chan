@@ -4,7 +4,7 @@
 import { BusStopsContextProvider } from "./BusStopsContext";
 import { BusServicesContextProvider} from "./BusServicesContext";
 import { BusRoutesContextProvider } from "./BusRoutesContext";
-import { BusRoutesWithTracking } from "./BusRoutesWithTracking";
+import { BusRoutesTest } from "./BusRoutesTest";
 import { BusRoutesWithDistances } from "./BusRoutesWithDistances";
 
 export function BusTrackingMain(){
@@ -14,7 +14,7 @@ export function BusTrackingMain(){
     <BusStopsContextProvider>
     <BusServicesContextProvider>
     <BusRoutesContextProvider>
-       <BusRoutesWithTracking />
+       <BusRoutesTest />
        <BusRoutesWithDistances />
     </BusRoutesContextProvider>
     </BusServicesContextProvider>
