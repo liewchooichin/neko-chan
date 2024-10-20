@@ -301,10 +301,15 @@ export function BusRoutesWithDistances(){
         lng: pos.coords.longitude,
         accuracy: Number.parseFloat(pos.coords.accuracy).toFixed(2),
       });
+      // Clear the error message
+      setErrorMessage("");
     }
     // handle error from the browser navigator
     function error(err){
       console.warn(`Error: ${err.code}, {err.message}`);
+      // set the error message
+      setErrorMessage("Cannot find distances between bus stops " + 
+        "and current location.");
     }
     // call the browser navigator
     navigator.geolocation.getCurrentPosition(success, error, options);
@@ -320,8 +325,6 @@ export function BusRoutesWithDistances(){
       // check that tempItem is not null
       //console.log("In calculate distance ", tempItem);
       if(!tempItem){
-        setErrorMessage("Cannot find distances between bus stops " + 
-          "and current location.");
         return;
       }
       // calculate the distance
