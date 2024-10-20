@@ -25,10 +25,8 @@ export function BusRoutesWithDistances(){
   // direction of bus route, default to 1.
   const [serviceDirectionInput, setServiceDirectionInput] = useState(1); 
   // The route info
-  const [direction1, setDirection1] = useState({origin1: "", dest1: "", loopDesc: ""});
-  const [direction2, setDirection2] = useState({origin2: "", dest2: ""});
-  const [route1, setRoute1] = useState([]);
-  const [route2, setRoute2] = useState([]);
+  const [direction, setDirection] = useState({origin: "", dest: "", loopDesc: ""});
+  const [route, setRoute] = useState([]);
 
   // get the road name of a bus stop
   function getRoadName(busStopCode){
@@ -59,6 +57,8 @@ export function BusRoutesWithDistances(){
   }
 
   // use memo for the unique service no
+  // This will be in the search list of bus 
+  // service numbers.
   const uniqueServiceNo = useMemo(()=>{
     // Get unique service no.
     function getUniqueServiceNo(){
@@ -100,59 +100,68 @@ export function BusRoutesWithDistances(){
    */
   // Assemble the route sequence
   function assembleRoutes(){
-    const route1 = [];
-    const route2 = [];
-    // This will check for loop service.
-    let isLoopService = false;
-    // Is there any bus service input
+    // Is there any bus service input,
+    // if no service return empty route arrays.
     if(serviceNoInput === ""){
-      return {route1: [], route2: []};
+      return [];
     }
     // Find the bus service number from the unique
     // bus service list.
     // Get the OriginCode && StopSequence = first stop
     // Get the DestinationCode && StopSequence = last stop
     // Sequence the route one by one.
-    let tempList1, tempList2;
+    let tempList;
     // Direction 1
-    tempList1 = busRoutes.filter((i)=>(
+    tempList = busRoutes.filter((i)=>(
       (i["ServiceNo"] === serviceNoInput) && 
-      (i["Direction"] === 1)
+      (i["Direction"] === serviceDirectionInput)
     ))
-    console.log("temp list 1 ", tempList1);
-    console.log("len of temp list 1 ", tempList1.length);
+    console.log("temp list  ", tempList);
+    console.log("len of temp list ", tempList.length);
     // use the origin1 and dest1 for the BusStopCode.
     // Then get the corresponding sequence number.
     let tempItem;
     // get the origin and dest
     // Need to take care of the loop situation where
     // the bus stop code or origin===dest.
-    const {origin1, dest1, loopDesc, origin2, dest2} =  
-      getOriginDestInfo();
+    const {origin, dest, loopDesc} = getOriginDestInfo();
     // Check for looping service by comparing origin===dest.
     // If it is a loop service, there is no Direction 2.
-    if(origin1 === dest1){
+    // This will check for loop service.
+    let isLoopService = false;
+    if(origin === dest){
       isLoopService = true;
     }
-    // Find the origin1
-    tempItem = tempList1.find((i)=>(
-      i["BusStopCode"] === origin1
+    // if no direction 2, return empty route array [].
+    // And also loop service is true, then return return
+    // empty array.
+    if(isLoopService===true && tempList.length===0) {
+      return [];
+    }
+    // Find the origin
+    tempItem = tempList.find((i)=>(
+      i["BusStopCode"] === origin
     ))
     console.log("start sequence ", tempItem["StopSequence"]);
-    let start1 = tempItem["StopSequence"];
-    // Find dest1. Find lst index to take care of 
-    // the looping service.
-    tempItem = tempList1.findLast((i)=>(
-      i["BusStopCode"] === dest1
+    // Start of sequence number
+    let startNum = tempItem["StopSequence"];
+    // Find dest1. Find last index to take care of 
+    // the looping service. Because in looping service, both
+    // bus stop codes are the same. So, I need to use findLast to
+    // find the last index of the bus stop codes.
+    tempItem = tempList.findLast((i)=>(
+      i["BusStopCode"] === dest
     ))
     console.log("end sequence ", tempItem["StopSequence"]);
-    let end1 = tempItem["StopSequence"];
+    // End of sequence number
+    let endNum = tempItem["StopSequence"];
     // Now use the sequence start and stop to get the list of
     // bus stops of the route.
     // The "StopSequence" is not always in sequence, so skip 
     // those that are not available.
-    for(let num=start1; num<=end1; num++){
-      tempItem = tempList1.find((i)=>{
+    const route = [];
+    for(let num=startNum; num<=endNum; num++){
+      tempItem = tempList.find((i)=>{
         return (i["StopSequence"] === num)
     })
       // sometimes sequence number is skipped.
@@ -161,82 +170,64 @@ export function BusRoutesWithDistances(){
         continue;
       }
       else{
-        route1.push(tempItem["BusStopCode"]);
-      }
-    }
-
-    // Direction 2
-    tempList2 = busRoutes.filter((i)=>(
-      (i["ServiceNo"] === serviceNoInput) && 
-      (i["Direction"] === 2)
-    ))
-    // if no direction 2, return [].
-    // route2 is initialized as [].
-    console.log("temp list 2", tempList2)
-    if(isLoopService===true || tempList2.length===0) {
-      return {route1: route1, route2: route2};
-    }
-    // use the origin1 and dest1 for the BusStopCode.
-    // Then get the corresponding sequence number.
-    // get the origin and dest
-    tempItem = tempList2.find((i)=>(
-      i["BusStopCode"].toString() === origin2
-    ))
-    let start2 = tempItem["StopSequence"];
-    tempItem = tempList2.find((i)=>(
-      i["BusStopCode"] === dest2
-    ))
-    let end2 = tempItem["StopSequence"];
-    // Now use the sequence start and stop to get the list of
-    // bus stops of the route.
-    // The "StopSequence" is not always in sequence, so skip 
-    // those that are not available.
-    for(let num=start2; num<=end2; num++){
-      tempItem = tempList2.find((i)=>(
-        i["StopSequence"] === num
-      ))
-      if(!tempItem){
-        continue;
-      }
-      else{
-        route2.push(tempItem["BusStopCode"]);
+        route.push(tempItem["BusStopCode"]);
       }
     }
     // return the routes
-    return {route1: route1, route2: route2}
+    return route;
   }
 
   // Get origin, dest and loop info
+  /**
+   * In bus services data, some loop bus will have both 
+   * direction 1 and 2 and LoopDesc like bus 359. 
+   * But for some, there is
+   * only direction 1 and LoopDesc, like bus 120, 121, 122.
+   * So, in the find item, I only compare for service no.
+   * After that compare for origin and destination to check
+   * whether direction 2 is necessary.
+   */
   function getOriginDestInfo(){
-    let tempItem1, tempItem2;
-    let info = {origin1: "", dest1: "", loopDesc: "",
-      origin2: "", dest2: "",
-    }
+    let info = {origin: "", dest: "", loopDesc: ""};
     // Check for input
+    console.log("In get origin dest, service no ", serviceNoInput);
+    console.log("In get origin dest, direction ", serviceDirectionInput);
     if(serviceNoInput === ""){
-      return info;
+      return info; // empty info
     }
-    tempItem1 = busServices.find((i)=>(
-      (i.ServiceNo === serviceNoInput) &&
-      (i.Direction === 1)
-    ))
+    // Get the service no and direction 1 first
+    
+    let tempItem1 = busServices.find((i, index)=>{
+      if(index===0){
+      console.log("In finding item");
+      console.log("Type of service ", typeof(i.ServiceNo));
+      console.log("Type of direction ", typeof(i.Direction));
+      }
+      return(
+        (i.ServiceNo === serviceNoInput) &&
+        (i.Direction === 1)
+      )
+    })
+    console.log("In get origin dest ", tempItem1);
+    // Check for destination==origin. If loop service, skip
+    // direction 2.
+    if((tempItem1["OriginCode"]!==tempItem1["DestinationCode"])){
+      let finalItem;
+      finalItem = busServices.find((i, index)=>(
+        (i.ServiceNo === serviceNoInput && 
+         i.Direction === serviceDirectionInput)
+      ));
+      info = {origin: finalItem["OriginCode"],
+        dest: finalItem["DestinationCode"],
+        loopDesc: finalItem["LoopDesc"]}
+    }
     // Direction 1 is always available. 
     // Loop service only have direction 1.
     // Loop service will have LoopDesc.
-    if(tempItem1){
-      info = {origin1: tempItem1["OriginCode"],
-        dest1: tempItem1["DestinationCode"],
+    else{
+        info = {origin: tempItem1["OriginCode"],
+        dest: tempItem1["DestinationCode"],
         loopDesc: tempItem1["LoopDesc"]}
-    }
-    // check for direction 2
-    tempItem2 = busServices.find((i)=>(
-      (i.ServiceNo === serviceNoInput) && 
-      (i.Direction === 2)
-    ))
-    if(tempItem2){
-      info = {...info, origin2: tempItem2["OriginCode"],
-        dest2: tempItem2["DestinationCode"],
-      }
     }
     // return the info
     return info;
@@ -245,52 +236,36 @@ export function BusRoutesWithDistances(){
   // event handler
   function handleServiceNoInput(e){
     const newInput = e.target.value;
+    console.log("Service no ", newInput);
     setServiceNoInput(newInput);
     // clear the routes
-    setRoute1([]);
-    setRoute2([]);
-    setDirection1({origin1: "", dest1: "", loopDesc: ""});
-    setDirection2({origin2: "", dest2: ""});
+    setRoute([]);
+    setDirection({origin: "", dest: "", loopDesc: ""});
   }
   function handleDirectionInput(e){
     const newInput = e.target.value;
     console.log("Target value ", newInput);
-    setServiceDirectionInput(newInput);
+    // the data for BusServices.Direction is of type number.
+    setServiceDirectionInput(Number.parseInt(newInput));
     // clear the routes
-    setRoute1([]);
-    setRoute2([]);
+    setRoute([]);
+    setDirection({origin: "", dest: "", loopDesc: ""});
   }
   // search the route
   function  handleSearchRoute(e){
     // Get the origin and destination bus stop code
-    const {origin1, dest1, loopDesc, origin2, dest2} = getOriginDestInfo();
-    setDirection1({origin1: origin1, dest1: dest1, loopDesc: loopDesc});
-    setDirection2({origin2: origin2, dest2: dest2})
+    const {origin, dest, loopDesc} = getOriginDestInfo();
+    setDirection({origin: origin, dest: dest, loopDesc: loopDesc});
     // Call the function
-    const {route1, route2} = assembleRoutes();
-    setRoute1(route1);
-    setRoute2(route2);
+    const route = assembleRoutes();
+    setRoute(route);
   }
 
   // List the direction
   let directionResult;
-  if(serviceDirectionInput==="1"){
+  if(serviceDirectionInput===1 || serviceDirectionInput===2){
     directionResult = 
-      (route1.map((busStopCode, index)=>(
-        <tr key={`${index}-${busStopCode}`}>
-          <td>
-            <ul>
-            <li>Bus stop: {busStopCode ? busStopCode : ""}</li>
-            <li>Place: {busStopCode ? getRoadDescription(busStopCode) : ""}</li>
-            <li>Road: {busStopCode ? getRoadName(busStopCode) : ""}</li>
-            </ul>
-          </td>
-        </tr>
-        )))
-  }
-  if(serviceDirectionInput==="2"){
-    directionResult = 
-      (route2.map((busStopCode, index)=>(
+      (route.map((busStopCode, index)=>(
         <tr key={`${index}-${busStopCode}`}>
           <td>
             <ul>
@@ -305,10 +280,11 @@ export function BusRoutesWithDistances(){
 
   // List the bus routes
   let content;
-  if(isLoading){
+  if(stopsLoading || servicesLoading || routesLoading){
     content = (<p>Loading data ...</p>)
   }
-  if(!isLoading && (busRoutes.length>0) &&(busServices.length>0)
+  if(!stopsLoading && !servicesLoading && !routesLoading
+      && (busStops.length) && (busRoutes.length>0) &&(busServices.length>0)
     ){
     content = (<>
       <Form>
@@ -335,8 +311,8 @@ export function BusRoutesWithDistances(){
             name="radioDirection"
             type="radio"
             label="Direction 1"
-            value="1"
-            checked={serviceDirectionInput==="1"}
+            value={1}
+            checked={serviceDirectionInput===1}
             onChange={handleDirectionInput}
           ></Form.Check>
           <Form.Check
@@ -344,8 +320,8 @@ export function BusRoutesWithDistances(){
             name="radioDirection"
             type="radio"
             label="Direction 2"
-            value="2"
-            checked={serviceDirectionInput==="2"}
+            value={2}
+            checked={serviceDirectionInput===2}
             onChange={handleDirectionInput}
           ></Form.Check>
         </Form.Group>
@@ -356,43 +332,28 @@ export function BusRoutesWithDistances(){
         >Search</Button>
       </Form>
       <h3>Routes of service {serviceNoInput}</h3>
-      <Table>
+      <Table variant="flush">
           <thead>
             <tr>
-              {(serviceDirectionInput==="1") && (
-                <th >Direction 1
+              {(serviceDirectionInput===1 || serviceDirectionInput===2) 
+                && (
+                <th >Direction {serviceDirectionInput}
                 <ul>
-                <li>Origin bus stop: {direction1.origin1}</li>
+                <li>Origin bus stop: {direction.origin}</li>
                 <ul>
-                  <li>Place: {getRoadDescription(direction1.origin1)}</li>
-                  <li>Road: {getRoadName(direction1.origin1)}</li>
+                  <li>Place: {getRoadDescription(direction.origin)}</li>
+                  <li>Road: {getRoadName(direction.origin)}</li>
                 </ul>
                 
-                <li>Destination bus stop {direction1.dest1}</li>
+                <li>Destination bus stop {direction.dest}</li>
                   <ul>
-                    <li>{getRoadDescription(direction1.dest1)}</li>
-                    <li>{getRoadName(direction1.dest1)}</li>
+                    <li>Place: {getRoadDescription(direction.dest)}</li>
+                    <li>Road: {getRoadName(direction.dest)}</li>
                   </ul>
-                  </ul>
-                {direction1.loopDesc 
-                ? (<>Loop at: {direction1.loopDesc}</>) : ""}</th>)}
-              
-              {(serviceDirectionInput==="2") && (
-                <th>Direction 2
-                <ul>
-                <li>Origin bus stop: {direction2.origin2}</li>
-                <ul>
-                  <li>Place: {getRoadDescription(direction2.origin2)}</li>
-                  <li>Road: {getRoadName(direction2.origin2)}</li>
+                <li>Loop at: {direction.loopDesc}</li>
                 </ul>
-                
-                <li>Destination bus stop {direction2.dest2}</li>
-                  <ul>
-                    <li>{getRoadDescription(direction2.dest2)}</li>
-                    <li>{getRoadName(direction2.dest2)}</li>
-                  </ul>
-                  </ul></th>)}
-            </tr>
+                </th>)}
+                </tr>
           </thead>
           <tbody>
             {directionResult}
