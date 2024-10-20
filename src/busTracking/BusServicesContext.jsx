@@ -14,7 +14,7 @@ BusServicesContextProvider.propTypes = {
 export function BusServicesContextProvider({children}){
 
   const [busServices, setBusServices] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [servicesLoading, setServicesLoading] = useState(false);
 
   // Fetch the list of bus services. No dependency
   useEffect(()=>{
@@ -31,7 +31,7 @@ export function BusServicesContextProvider({children}){
       do {
         const params = {"$skip": i};
         try{
-          setIsLoading(true);
+          setServicesLoading(true);
           const response = await busApi.get(BUS_SERVICES, {params});
           dataLen = response.data.value.length; // if 500 continue
           // MUST NOT use [], push individual items.
@@ -43,7 +43,7 @@ export function BusServicesContextProvider({children}){
           console.error(error);
         }
         finally{
-          setIsLoading(false);
+          setServicesLoading(false);
         }
       } while(dataLen === 500);
       // set the bus services list to this temp list
@@ -60,7 +60,7 @@ export function BusServicesContextProvider({children}){
     // Get unique service no.
     function getUniqueServiceNo(){
       const newList = [];
-      if(!isLoading && (busServices.length>0)){
+      if(!servicesLoading && (busServices.length>0)){
         // Get the unique bus stops
         for(let i=0; i<busServices.length; i++){
           if(newList.includes(busServices[i]["ServiceNo"])){
@@ -76,14 +76,14 @@ export function BusServicesContextProvider({children}){
     }
       // MUST return the list from the function call
       return getUniqueServiceNo();
-    }, [busServices, isLoading])  
+    }, [busServices, servicesLoading])  
   
   return(
     <BusServicesContext.Provider value={busServices}>
     <UniqueBusServicesContext.Provider value={uniqueServiceNo}>
-    <BusServicesLoadingContext value={isLoading}>
+    <BusServicesLoadingContext.Provider value={servicesLoading}>
       {children}
-      </BusServicesLoadingContext>
+      </BusServicesLoadingContext.Provider>
     </UniqueBusServicesContext.Provider>
     </BusServicesContext.Provider>
   )

@@ -4,14 +4,14 @@ import PropTypes from "prop-types";
 import { busApi, BUS_ROUTES } from "../busInfo/apiUtils";
 
 export const BusRoutesContext = createContext(null);
-
+export const BusRoutesLoadingContext = createContext(null);
 // PropTypes.element: A React element (ie. <MyComponent />).
 BusRoutesContextProvider.propTypes = {
   children: PropTypes.element,
 }
 export function BusRoutesContextProvider({children}){
   const [busRoutes, setBusRoutes] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [routesLoading, setRoutesLoading] = useState(false);
 
   // Fetch the bus routes. No dependency.
   useEffect(()=>{
@@ -28,7 +28,7 @@ export function BusRoutesContextProvider({children}){
       do {
         const params = {"$skip": i};
         try{
-          setIsLoading(true);
+          setRoutesLoading(true);
           const response = await busApi.get(BUS_ROUTES, {params});
           dataLen = response.data.value.length; // if 500 continue
           // Push individual items of the response data into the list.
@@ -44,7 +44,7 @@ export function BusRoutesContextProvider({children}){
           console.error(error);
         }
         finally{
-          setIsLoading(false);
+          setRoutesLoading(false);
         }
       } while(dataLen === 500);
       // set the bus services list to this temp list
@@ -58,8 +58,10 @@ export function BusRoutesContextProvider({children}){
 
 
   return(
-    <BusRoutesContextProvider value={busRoutes}>
+    <BusRoutesContext.Provider value={busRoutes}>
+    <BusRoutesLoadingContext.Provider value={routesLoading}>
       {children}
-    </BusRoutesContextProvider>
+    </BusRoutesLoadingContext.Provider>
+    </BusRoutesContext.Provider>
   )
 }

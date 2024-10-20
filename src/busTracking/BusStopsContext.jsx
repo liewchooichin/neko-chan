@@ -11,16 +11,13 @@ import { busApi, BUS_STOPS } from "../busInfo/apiUtils";
 export const BusStopsContext = createContext(null);
 export const UniqueStopListContext = createContext(null);
 export const BusStopsLoadingContext = createContext(null);
-// export const BusServicesContext = createContext(null);
-// export const UniqueBusServicesContext = createContext(null);
-// export const BusRoutesContext = createContext(null);
 
 // PropTypes.element: A React element (ie. <MyComponent />).
 BusStopsContextProvider.propTypes = {
   children: PropTypes.element,
 }
 export function BusStopsContextProvider({children}){
-  const [isLoading, setIsLoading] = useState(false);
+  const [busLoading, setBusLoading] = useState(false);
   const [busStops, setBusStops] = useState([]);
 
   // Fetch the list of bus stops with names. No dependency.
@@ -38,7 +35,7 @@ export function BusStopsContextProvider({children}){
       do {
         const params = {"$skip": i};
         try{
-          setIsLoading(true);
+          setBusLoading(true);
           const response = await busApi.get(BUS_STOPS, {params});
           dataLen = response.data.value.length; // if 500 continue
           // MUST NOT use [], push individual items.
@@ -50,7 +47,7 @@ export function BusStopsContextProvider({children}){
           console.error(error);
         }
         finally{
-          setIsLoading(false);
+          setBusLoading(false);
         }
       } while(dataLen === 500);
       // set the bus services list to this temp list
@@ -67,7 +64,7 @@ const uniqueStopList = useMemo(()=>{
   // Get unique service no.
   function getUniqueStopList(){
     const newList = [];
-    if(!isLoading && (busStops.length>0)){
+    if(!busLoading && (busStops.length>0)){
       // Get the unique bus stops
       // Actually every bus stops is unique.
       // So, just put the BusStopCode into a new list.
@@ -79,12 +76,12 @@ const uniqueStopList = useMemo(()=>{
   }
     // MUST return the list from the function call
     return getUniqueStopList();
-  }, [busStops, isLoading])  
+  }, [busStops, busLoading])  
   
   return(
     <BusStopsContext.Provider value={busStops}>
     <UniqueStopListContext.Provider value={uniqueStopList}>
-    <BusStopsLoadingContext.Provider value={isLoading}>
+    <BusStopsLoadingContext.Provider value={busLoading}>
       {children}
       </BusStopsLoadingContext.Provider>
     </UniqueStopListContext.Provider>
