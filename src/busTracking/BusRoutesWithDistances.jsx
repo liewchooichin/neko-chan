@@ -10,7 +10,7 @@ import Button from "react-bootstrap/Button";
 import Table from "react-bootstrap/Table";
 import ListGroup from "react-bootstrap/ListGroup";
 import { haversineDistance } from "./utilsHaversine";
-
+import { hereApi, revgeocode } from "./utilsHereAPI";
 
 export function BusRoutesWithDistances(){
   // Context of various data
@@ -278,11 +278,32 @@ export function BusRoutesWithDistances(){
     const route = assembleRoutes();
     setRoute(route);
   }
+  // Reverse geo coding using Here Api
+  // reverse geo-coding to get the place name
+  async function reverseGeocoding(lat, lng){
+    const apiKey= `${import.meta.env.VITE_HERE_API_KEY}`;
+    const lang="en-US";
+    const at=`${lat},${lng}`;
+    try{
+      setIsLoading(true);
+      const response = await hereApi.get(revgeocode,
+        {params: {apiKey:apiKey, at:at, lang:lang}});
+      setCurrentPlaceName(response.data);
+    }catch(error){
+      console.error(error);
+    }finally{
+      setIsLoading(false);
+    }
+  }
   // handle get nearest bus stops
   // First, call the browser navigator to get the coordinate.
   // Then calculate the distance of the current coordinate from
   // each of the bus stops
   function handleNearestBusStops(e){
+    // Make sure the bus routes exists
+    if(route.length===0 || !route){
+      return;
+    }
     // options of browser navigator
     const options = {
       enableHighAccuracy: true,
@@ -313,6 +334,10 @@ export function BusRoutesWithDistances(){
     }
     // call the browser navigator
     navigator.geolocation.getCurrentPosition(success, error, options);
+    // Call HERE Api to get the place name using reverse geocoding
+    if(currentCoordinate){
+      reverseGeocoding(currentCoordinate.lat, currentCoordinate.lng);
+    }
     // Call the function to calculate the distance between the two points.
     let newList = [];
     // Calculate the distance of the current location and the bus stops in
@@ -364,12 +389,14 @@ export function BusRoutesWithDistances(){
 
   // list the nearest bus stops
   let nearestBusStopsResult;
-  if(stopDistances.length > 0){
+  if(!isLoading && stopDistances.length>0 && 
+    currentCoordinate && currentPlaceName){
     nearestBusStopsResult = (
       <>
       <h3>Nearest bus stops</h3>
       <ListGroup>
-      <ListGroup.Item>Current coordinate: 
+      <ListGroup.Item>Current location: 
+          Place {currentPlaceName.items[0]["title"]}<br/>
           Lat {currentCoordinate.lat}, Lng {currentCoordinate.lng}
       </ListGroup.Item>
       {stopDistances.map((item, index)=>(
